@@ -16,8 +16,8 @@ client_id = os.getenv('CLIENT_ID')
 client_secret = os.getenv('CLIENT_SECRET')
 
 
-def check_api_limit():
-    pass
+# def check_api_limit():
+#     pass
 
 
 def get_fresh_api_token():
@@ -55,5 +55,5 @@ def get_list_of_activities():
             return False
 
 
-if __name__ == '__main__':
-    get_list_of_activities()
+# if __name__ == '__main__':
+#     get_list_of_activities()

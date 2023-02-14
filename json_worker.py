@@ -3,6 +3,7 @@ import os
 from datetime import datetime as dt
 from time import strftime, gmtime
 from dotenv import load_dotenv
+from main import get_list_of_activities
 
 load_dotenv()
 
@@ -82,6 +83,7 @@ def get_energy_spent(i):
 
 
 def generation_analyse():
+    get_list_of_activities()
     statistics = []
     for i in range(0, len(load_data)):
         type_of_activity = get_type_of_activity(i)
