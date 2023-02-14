@@ -16,10 +16,6 @@ client_id = os.getenv('CLIENT_ID')
 client_secret = os.getenv('CLIENT_SECRET')
 
 
-# def check_api_limit():
-#     pass
-
-
 def get_fresh_api_token():
     data = {'client_id': client_id,
             'client_secret': client_secret,
@@ -29,6 +25,7 @@ def get_fresh_api_token():
     new_access_token = response['access_token']
     os.environ['ACCESS_TOKEN'] = new_access_token
     dotenv.set_key('.env', 'ACCESS_TOKEN', new_access_token)
+    return True
 
 
 def get_list_of_activities():

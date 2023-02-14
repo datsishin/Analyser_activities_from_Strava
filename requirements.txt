@@ -1,11 +1,17 @@
 certifi==2022.12.7
 charset-normalizer==3.0.1
+colorclass==2.2.2
 data==0.4
 decorator==5.1.1
+docopt==0.6.2
 funcsigs==1.0.2
 idna==3.4
+packaging==23.0
+pip-update==0.4.1
+pip-upgrader==1.4.15
 pyTelegramBotAPI==4.10.0
 python-dotenv==0.21.1
 requests==2.28.2
 six==1.16.0
+terminaltables==3.1.10
 urllib3==1.26.14
