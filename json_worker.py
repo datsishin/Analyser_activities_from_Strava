@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime as dt
-from time import strftime, gmtime, strptime
+from time import strftime, gmtime
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -85,6 +85,7 @@ def generation_analyse():
     statistics = []
     for i in range(0, len(load_data)):
         type_of_activity = get_type_of_activity(i)
+        name = load_data[i]['name']
         date = dt.strptime(load_data[i]['start_date_local'], '%Y-%m-%dT%H:%M:%SZ').date()
         distance = round(load_data[i]['distance'] / 1000, 2)
         moving_time = strftime("%H:%M:%S", gmtime(load_data[i]['moving_time']))
@@ -104,6 +105,7 @@ def generation_analyse():
 
             item = [f'📅Дата – {date}{nl}'
                     f'🚴🏼‍Вид тренировки – {type_of_activity}{nl}'
+                    f'✏️Название – {name}{nl}'
                     f'📏Расстояние – {distance}км{nl}'
                     f'⏰Продолжительность тренировки – {moving_time}{nl}'
                     f'🏔️Суммарный набор высоты – {total_elevation_gain}м{nl}'
@@ -128,6 +130,7 @@ def generation_analyse():
         if type_of_activity == 'Бег':
             item_of_run = f'📅Дата – {date}{nl}'
             f"🏃🏼‍‍Вид тренировки – {type_of_activity}{nl}"
+            f'✏️Название – {name}{nl}'
             f"📏Расстояние – {distance}км{nl}"
             f"⏰Продолжительность тренировки – {moving_time}{nl}"
             f"🏔️Суммарный набор высоты – {total_elevation_gain}м{nl}"
@@ -142,9 +145,9 @@ def generation_analyse():
             f'🧁Потрачено калорий – {check_calories}{nl}'
 
             statistics.extend(item_of_run)
-
-    return statistics[-1]
-
+    # str_statistics = ' '.join(statistics)
+    # return str_statistics
+    return statistics[0]
 
 # if __name__ == '__main__':
 #     generation_analyse()

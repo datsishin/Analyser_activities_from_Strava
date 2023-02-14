@@ -2,6 +2,7 @@ import json
 import os
 import time
 
+import dotenv
 import requests
 from dotenv import load_dotenv
 
@@ -27,22 +28,20 @@ def get_fresh_api_token():
     response = requests.post(url_refresh_token, data=data).json()
     new_access_token = response['access_token']
     os.environ['ACCESS_TOKEN'] = new_access_token
-    return print(os.environ['ACCESS_TOKEN'])
-    # return new_access_token
+    dotenv.set_key('.env', 'ACCESS_TOKEN', new_access_token)
 
 
 def get_list_of_activities():
-    params = {'access_token': token}
-    r = requests.get(url, params=params)
-    status = r.status_code
     while True:
-        # access_token = os.getenv('ACCESS_TOKEN')
+        params = {'access_token': token}
+        r = requests.get(url, params=params)
+        status = r.status_code
         if status == 429:
             print("Too many requests, slow down dude!")
             time.sleep(2)
 
         if status == 401:
-            print("API TOKEN is expired, I'll go to get new...")
+            print("API TOKEN is expired, I'll go for a new one...")
             get_fresh_api_token()
             time.sleep(2)
 

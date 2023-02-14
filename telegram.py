@@ -9,6 +9,9 @@ token = os.getenv('TELEGRAM_API_TOKEN')
 
 bot = telebot.TeleBot(token)
 
+# choise_the_training = {'the_last': 0,
+#                        'the_second': 1}
+
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
