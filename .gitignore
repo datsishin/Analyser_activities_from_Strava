@@ -162,3 +162,8 @@ cython_debug/
 
 !/data.json
 !/mileage.json
+!/geckodriver.log
+!/the_longest_training.json
+!/picture.png
+!/graph.png
+!/Zwift_03_01_23_Aerobnaja_tehnika_3_in_London.gpx

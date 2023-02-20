@@ -8,12 +8,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-url = 'https://www.strava.com/api/v3/athlete/activities'
 url_refresh_token = 'https://www.strava.com/oauth/token'
-token = os.getenv('ACCESS_TOKEN')
 refresh_token = os.getenv('REFRESH_TOKEN')
 client_id = os.getenv('CLIENT_ID')
 client_secret = os.getenv('CLIENT_SECRET')
+
+# Специальный символ для переноса строк внутри f-строк
+nl = '\n'
 
 
 def get_fresh_api_token():
@@ -24,62 +25,91 @@ def get_fresh_api_token():
     response = requests.post(url_refresh_token, data=data).json()
     new_access_token = response['access_token']
     dotenv.set_key('.env', 'ACCESS_TOKEN', new_access_token, quote_mode='never')
+    return new_access_token
+
+
+def check_change_of_mileage(new_mileage: int) -> str:
+    if os.path.exists('mileage.json'):
+        with open('mileage.json', 'r+', encoding='utf-8') as file:
+            load_data = json.load(file)
+            mileage = load_data['converted_distance']
+            if mileage != new_mileage:
+                dif_mileage = new_mileage - mileage
+                data = {'converted_distance': new_mileage}
+                with open('mileage.json', 'w') as new_file:
+                    json.dump(data, new_file)
+                return f'Старый пробег составлял – {mileage} км{nl}{nl}' \
+                       f'Пробег увеличился на – {dif_mileage} км{nl}{nl}' \
+                       f'Общий пробег составляет – {new_mileage} км'
+            else:
+                return f'Общий пробег составляет – {mileage} км'
+    else:
+        data = {'converted_distance': new_mileage}
+        with open("mileage.json", "w") as file:
+            json.dump(data, file)
+        return f'Общий пробег составляет – {new_mileage} км'
 
 
 def get_mileage_for_service():
-    params = {'access_token': token}
+    token = os.getenv('ACCESS_TOKEN')
     bike_id = os.getenv('BIKE_ID')
-    bike_url = f'https://www.strava.com/api/v3/gear/{bike_id}'
-    r = requests.get(bike_url, params=params)
-    status = r.status_code
-    while True:
-        if status == 401:
-            print("API TOKEN is expired, I'll go for a new one...")
-            get_fresh_api_token()
-            return 'API TOKEN is expired, try other command first'
+    url_bike = f'https://www.strava.com/api/v3/gear/{bike_id}'
+    params = {'access_token': token}
 
-        if status == 200:
-            if os.path.isfile('mileage.json'):
-                with open('mileage.json', 'r', encoding='utf-8') as file:
-                    load_data = json.load(file)
-                    fresh_mileage = load_data['converted_distance']
-                    if load_data['converted_distance'] == fresh_mileage:
-                        return f"Пробег составляет {load_data['converted_distance']}км"
-                    else:
-                        increasing_mileage = fresh_mileage - load_data['converted_distance']
-                        load_data['converted_distance'] = fresh_mileage
-                        with open("mileage.json", "w") as f:
-                            json.dump(load_data, f)
-                        return f"Пробег с последнего обновления увеличился на" \
-                               f" {increasing_mileage}км и составляет {load_data['converted_distance']}км"
-
-            else:
-                with open("mileage.json", "w") as file:
-                    json.dump(r.json(), file)
-                return f'Данные загружены, повторите запрос'
+    first_data = status_code_checker(url_bike, params)
+    if type(first_data) == dict:
+        new_mileage = int(first_data['converted_distance'])
+        return check_change_of_mileage(new_mileage)
+    else:
+        params = {'access_token': first_data}
+        data = status_code_checker(url_bike, params)
+        if type(data) == dict:
+            new_mileage = int(data['converted_distance'])
+            return check_change_of_mileage(new_mileage)
 
 
 def get_list_of_activities():
+    url = 'https://www.strava.com/api/v3/athlete/activities'
+    token = os.getenv('ACCESS_TOKEN')
     params = {'access_token': token}
-    r = requests.get(url, params=params)
-    status = r.status_code
+
+    first_data = status_code_checker(url, params)
+
+    if type(first_data) == list:
+        with open('data.json', 'w') as first_file:
+            json.dump(first_data, first_file)
+    else:
+        params = {'access_token': first_data}
+        data = status_code_checker(url, params)
+        if type(data) == list:
+            with open('data.json', 'w') as file:
+                json.dump(data, file)
+
+
+def status_code_checker(url, params):
+    response = requests.get(url, params=params)
+    status = response.status_code
+
     while True:
-        if status == 429:
-            print("Too many requests, slow down dude and try again later!")
-            time.sleep(2)
-            return False
 
-        if status == 401:
-            print("API TOKEN is expired, I'll go for a new one...")
-            get_fresh_api_token()
-            time.sleep(3)
-            return False
+        if status == 200:
+            return response.json()
+            # with open('data.json', 'w') as new_file:
+            #     json.dump(response.json(), new_file)
+        elif status == 401:
+            return get_fresh_api_token()
 
-        if r.status_code == 403:
-            raise Exception("VPN isn't work :(")
+        elif status == 403:
+            print('VPN isn\'t connect')
 
-        if r.status_code == 200:
-            data = r.json()
-            with open('data.json', 'w', encoding='utf-8') as file:
-                json.dump(data, file, ensure_ascii=False, indent=4)
-            return False
+        elif status == 404:
+            print('Not found')
+
+        elif status == 429:
+            print('Too many requests, slow down dude!')
+
+        elif status == 500:
+            print("Strava's API is broken, please try again later")
+
+# if __name__ == '__main__':
+#     get_list_of_activities()
