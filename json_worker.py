@@ -25,7 +25,7 @@ def get_stat():
     get_list_of_activities()
 
     global load_data
-    with open('data.json') as f:
+    with open('data/data.json') as f:
         load_data = json.load(f)
 
     today = datetime.now().date()
@@ -107,7 +107,7 @@ def generation_analyse():
     get_list_of_activities()
 
     global load_data
-    with open('data.json') as f:
+    with open('data/data.json') as f:
         load_data = json.load(f)
     get_picture(load_data[0])
 

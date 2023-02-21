@@ -15,12 +15,20 @@ def make_chart(list_of_zone, dicts_of_zones, option):
                   f'{percents[3]}%', f'{percents[4]}%']
     bar_colors = ['tab:grey', 'tab:blue', 'tab:green', 'tab:orange', 'tab:red']
 
-    ax.bar(zones, percents, label=bar_labels, color=bar_colors)
+    font_axes = {'fontsize': 18,
+                 'fontstyle': 'normal'}
 
-    ax.set_ylabel('%')
-    ax.set_xlabel(type_of_measurement[option])
+    font_title = {'fontsize': 30,
+                  'fontstyle': 'normal'}
+
+    ax.bar(zones, percents, label=bar_labels, color=bar_colors, width=0.9, bottom=True)
+
+    ax.set_ylabel('%', fontdict=font_axes)
+    ax.set_xlabel(type_of_measurement[option], fontdict=font_axes)
     ax.legend(title='Разбивка по зонам')
-    ax.set_title(label=f'Распределение по зонам{nl}')
+    # ax.set_title(label=f'Распределение по зонам{nl}', fontdict=font)
+    plt.title(f'Распределение по зонам{nl}', fontdict=font_title)
+
     fig.set_size_inches(10, 10)
 
-    plt.savefig(f'graph_by_{option}.png', facecolor='white', edgecolor='black', dpi=500)
+    plt.savefig(f'media/graph_by_{option}.png', facecolor='white', edgecolor='black', dpi=500)

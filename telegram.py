@@ -1,3 +1,4 @@
+from telebot.types import InputMediaPhoto
 import telebot
 import os
 from dotenv import load_dotenv
@@ -24,9 +25,9 @@ def say_hi(message):
 def get_training_data(message):
     text = generation_analyse()
     bot.send_message(message.chat.id, text=text)
-    # bot.send_photo(message.chat.id, photo=open('picture.png', 'rb'))
-    bot.send_photo(message.chat.id, photo=open('graph_by_power.png', 'rb'))
-    bot.send_photo(message.chat.id, photo=open('graph_by_hr.png', 'rb'))
+    with open('media/graph_by_power.png', 'rb') as f1, open('media/graph_by_hr.png', 'rb') as f2:
+        bot.send_media_group(message.chat.id, [InputMediaPhoto(f1),
+                                               InputMediaPhoto(f2)], disable_notification=True)
 
 
 @bot.message_handler(commands=['time_statistics'])

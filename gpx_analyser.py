@@ -3,6 +3,8 @@ import xml.etree.ElementTree as ET
 import matplotlib
 from matplotlib import pyplot as plt
 
+from graph_creater import make_chart
+
 matplotlib.use('agg')
 
 import glob
@@ -70,22 +72,6 @@ def get_data_by_zone():
     make_chart(list_of_zone_by_hr, dicts_of_zones_by_hr)
 
 
-def make_chart(list_of_zone_by_hr, dicts_of_zones_by_hr):
-    fig, ax = plt.subplots()
-
-    zones = list(list_of_zone_by_hr.values())
-    percents = list(dicts_of_zones_by_hr.values())
-    bar_labels = [f'{percents[0]}%', f'{percents[1]}%', f'{percents[2]}%',
-                  f'{percents[3]}%', f'{percents[4]}%']
-    bar_colors = ['tab:grey', 'tab:blue', 'tab:green', 'tab:orange', 'tab:red']
-
-    ax.bar(zones, percents, label=bar_labels, color=bar_colors)
-
-    ax.set_ylabel('%')
-    ax.legend(title='Разбивка по зонам')
-    fig.set_size_inches(10, 10)
-
-    plt.savefig('graph.png', facecolor='white', edgecolor='black', dpi=500)
 
 # if __name__ == '__main__':
 #     get_data_by_zone()

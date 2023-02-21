@@ -8,7 +8,7 @@ matplotlib.use('agg')
 
 glob.glob('./*.gpx')
 
-tree = ET.parse(glob.glob('./*.gpx')[0])
+tree = ET.parse(glob.glob('data/*.gpx')[0])
 root = tree.getroot()
 
 nl = '\n'

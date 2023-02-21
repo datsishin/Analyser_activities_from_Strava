@@ -6,9 +6,9 @@ from graph_creater import make_chart
 
 matplotlib.use('agg')
 
-glob.glob('./*.gpx')
+glob.glob('data/*.gpx')
 
-tree = ET.parse(glob.glob('./*.gpx')[0])
+tree = ET.parse(glob.glob('data/*.gpx')[0])
 root = tree.getroot()
 
 nl = '\n'

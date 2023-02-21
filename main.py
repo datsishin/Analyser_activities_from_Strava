@@ -29,14 +29,14 @@ def get_fresh_api_token():
 
 
 def check_change_of_mileage(new_mileage: int) -> str:
-    if os.path.exists('mileage.json'):
-        with open('mileage.json', 'r+', encoding='utf-8') as file:
+    if os.path.exists('data/mileage.json'):
+        with open('data/mileage.json', 'r+', encoding='utf-8') as file:
             load_data = json.load(file)
             mileage = load_data['converted_distance']
             if mileage != new_mileage:
                 dif_mileage = new_mileage - mileage
                 data = {'converted_distance': new_mileage}
-                with open('mileage.json', 'w') as new_file:
+                with open('data/mileage.json', 'w') as new_file:
                     json.dump(data, new_file)
                 return f'Старый пробег составлял – {mileage} км{nl}{nl}' \
                        f'Пробег увеличился на – {dif_mileage} км{nl}{nl}' \
@@ -45,7 +45,7 @@ def check_change_of_mileage(new_mileage: int) -> str:
                 return f'Общий пробег составляет – {mileage} км'
     else:
         data = {'converted_distance': new_mileage}
-        with open("mileage.json", "w") as file:
+        with open("data/mileage.json", "w") as file:
             json.dump(data, file)
         return f'Общий пробег составляет – {new_mileage} км'
 
@@ -76,13 +76,13 @@ def get_list_of_activities():
     first_data = status_code_checker(url, params)
 
     if type(first_data) == list:
-        with open('data.json', 'w') as first_file:
+        with open('data/data.json', 'w') as first_file:
             json.dump(first_data, first_file)
     else:
         params = {'access_token': first_data}
         data = status_code_checker(url, params)
         if type(data) == list:
-            with open('data.json', 'w') as file:
+            with open('data/data.json', 'w') as file:
                 json.dump(data, file)
 
 
