@@ -94,8 +94,7 @@ def status_code_checker(url, params):
 
         if status == 200:
             return response.json()
-            # with open('data.json', 'w') as new_file:
-            #     json.dump(response.json(), new_file)
+
         elif status == 401:
             return get_fresh_api_token()
 
@@ -110,6 +109,3 @@ def status_code_checker(url, params):
 
         elif status == 500:
             print("Strava's API is broken, please try again later")
-
-# if __name__ == '__main__':
-#     get_list_of_activities()

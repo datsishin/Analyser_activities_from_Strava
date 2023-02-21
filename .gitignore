@@ -160,10 +160,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-!/data.json
-!/mileage.json
-!/geckodriver.log
-!/the_longest_training.json
-!/picture.png
-!/graph.png
-!/Zwift_03_01_23_Aerobnaja_tehnika_3_in_London.gpx
+
+*.gpx
+*.json
+*.png

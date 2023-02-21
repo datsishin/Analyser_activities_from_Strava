@@ -1,5 +1,4 @@
 import io
-from matplotlib import pyplot as plt
 import statistics
 
 from PIL import Image

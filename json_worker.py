@@ -6,7 +6,8 @@ from time import strftime, gmtime
 
 from dotenv import load_dotenv
 
-from gpx_analyser import get_data_by_zone
+from hr_analyser import get_data_by_hr
+from power_analyser import get_data_by_power
 from main import get_list_of_activities
 from polyline_file import get_picture
 
@@ -101,13 +102,14 @@ def get_energy_spent():
 
 
 def generation_analyse():
+    get_data_by_hr()
+    get_data_by_power()
     get_list_of_activities()
 
     global load_data
     with open('data.json') as f:
         load_data = json.load(f)
     get_picture(load_data[0])
-    get_data_by_zone()
 
     for i in range(0, len(load_data)):
         type_of_activity = get_type_of_activity()
@@ -166,6 +168,3 @@ def generation_analyse():
                            f'🧁Потрачено калорий – {check_calories}{nl}']
 
             return item_of_run
-
-# if __name__ == '__main__':
-#     generation_analyse()
