@@ -30,8 +30,3 @@ def get_initial_data(id: int):
             power_data = list(response_power)[i]['data']
             get_power_statistics(power_data)
             break
-
-
-# if __name__ == '__main__':
-#     get_initial_data(8611225730)
-#     # get_initial_data(8531901871)

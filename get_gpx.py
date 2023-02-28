@@ -29,7 +29,3 @@ def get_data(id: int):
     target_file = max(files, key=os.path.getctime)
     output_file = f'{path}' + '/' + f'{id}.gpx'
     os.rename(target_file, output_file)
-
-
-# if __name__ == '__main__':
-#     get_data()

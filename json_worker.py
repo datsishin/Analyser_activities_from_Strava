@@ -117,7 +117,7 @@ def generation_analyse():
     global load_data
     with open('data/data.json') as f:
         load_data = json.load(f)
-    get_data(load_data[0])
+    # get_data(load_data[0])
     get_picture(load_data[0])
     get_initial_data(load_data[0]['id'])
 
