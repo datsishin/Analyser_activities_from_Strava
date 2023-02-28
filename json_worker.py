@@ -6,10 +6,7 @@ from time import strftime, gmtime
 
 from dotenv import load_dotenv
 
-from get_gpx import get_data
 from gpx_maker import get_initial_data
-# from hr_analyser import get_data_by_hr
-# from power_analyser import get_data_by_power
 from main import get_list_of_activities
 from polyline_file import get_picture
 
@@ -117,7 +114,6 @@ def generation_analyse():
     global load_data
     with open('data/data.json') as f:
         load_data = json.load(f)
-    # get_data(load_data[0])
     get_picture(load_data[0])
     get_initial_data(load_data[0]['id'])
 
