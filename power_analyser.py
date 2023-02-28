@@ -1,28 +1,17 @@
-import xml.etree.ElementTree as ET
-import glob
-import matplotlib
-
 from graph_creater import make_chart
-
-matplotlib.use('agg')
-
-glob.glob('./*.gpx')
-
-tree = ET.parse(glob.glob('data/*.gpx')[0])
-root = tree.getroot()
 
 nl = '\n'
 
-ftp = 200
+ftp = 220
 
 
-def get_data_by_power():
+def get_power_statistics(power_data: list):
     zone_1_by_power = [0, ftp * 0.55]
-    zone_2_by_power = [ftp * 0.56, ftp * 0.75]
-    zone_3_by_power = [ftp * 0.76, ftp * 0.9]
-    zone_4_by_power = [ftp * 0.91, ftp * 1.05]
-    zone_5_by_power = [ftp * 1.06, 5000]
-    
+    zone_2_by_power = [ftp * 0.55, ftp * 0.75]
+    zone_3_by_power = [ftp * 0.75, ftp * 0.9]
+    zone_4_by_power = [ftp * 0.9, ftp * 1.05]
+    zone_5_by_power = [ftp * 1.05, 5000]
+
     list_of_zone = {
         'zone_1_by_power': f'Восстановление {nl}{int(zone_1_by_power[0])} – {int(zone_1_by_power[1])}',
         'zone_2_by_power': f'Аэробная {nl}{int(zone_2_by_power[0])} – {int(zone_2_by_power[1])}',
@@ -42,9 +31,9 @@ def get_data_by_power():
 
     all_power_items = 0
 
-    seconds = root[1][2]
-    for _ in range(1, len(seconds), 1):
-        power = int(root[1][2][_][2][1][0].text)
+    seconds = len(power_data)
+    for _ in range(0, seconds):
+        power = power_data[_]
         if power != 0:
             all_power_items += 1
 
@@ -68,6 +57,5 @@ def get_data_by_power():
 
     make_chart(list_of_zone, dicts_of_zones, option)
 
-
 # if __name__ == '__main__':
-#     get_data_by_power()
+#     get_power_statistics()

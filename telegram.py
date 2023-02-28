@@ -1,3 +1,5 @@
+import glob
+
 from telebot.types import InputMediaPhoto
 import telebot
 import os
@@ -25,9 +27,15 @@ def say_hi(message):
 def get_training_data(message):
     text = generation_analyse()
     bot.send_message(message.chat.id, text=text)
-    with open('media/graph_by_power.png', 'rb') as f1, open('media/graph_by_hr.png', 'rb') as f2:
+    with open('media/graph_by_power.png', 'rb') as f1, open('media/graph_by_hr.png', 'rb') as f2, \
+            open('media/maps.png', 'rb') as f3:
         bot.send_media_group(message.chat.id, [InputMediaPhoto(f1),
                                                InputMediaPhoto(f2)], disable_notification=True)
+        # InputMediaPhoto(f3)],
+
+    files = glob.glob('media/*')
+    for f in files:
+        os.remove(f)
 
 
 @bot.message_handler(commands=['time_statistics'])

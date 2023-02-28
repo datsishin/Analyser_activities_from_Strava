@@ -1,15 +1,4 @@
-import xml.etree.ElementTree as ET
-import glob
-import matplotlib
-
 from graph_creater import make_chart
-
-matplotlib.use('agg')
-
-glob.glob('data/*.gpx')
-
-tree = ET.parse(glob.glob('data/*.gpx')[0])
-root = tree.getroot()
 
 nl = '\n'
 
@@ -17,12 +6,12 @@ hr_max = 202
 threshold = 185
 
 
-def get_data_by_hr():
+def get_hr_statistics(hr_data: list):
     zone_1_by_hr = [0, threshold * 0.68]
-    zone_2_by_hr = [threshold * 0.69, threshold * 0.83]
-    zone_3_by_hr = [threshold * 0.84, threshold * 0.94]
+    zone_2_by_hr = [threshold * 0.68, threshold * 0.85]
+    zone_3_by_hr = [threshold * 0.85, threshold * 0.95]
     zone_4_by_hr = [threshold * 0.95, threshold * 1.05]
-    zone_5_by_hr = [threshold * 1.06, hr_max]
+    zone_5_by_hr = [threshold * 1.05, hr_max]
 
     list_of_zone = {
         'zone_1_by_hr': f'Восстановление {nl}{int(zone_1_by_hr[0])} – {int(zone_1_by_hr[1])}',
@@ -43,9 +32,9 @@ def get_data_by_hr():
 
     all_hr_items = 0
 
-    seconds = root[1][2]
-    for _ in range(1, len(seconds), 1):
-        hr = int(root[1][2][_][2][1][0].text)
+    seconds = len(hr_data)
+    for _ in range(0, seconds):
+        hr = hr_data[_]
         if hr:
             if hr != 0:
                 all_hr_items += 1
@@ -69,7 +58,6 @@ def get_data_by_hr():
     option = 'hr'
 
     make_chart(list_of_zone, dicts_of_zones, option)
-
 
 # if __name__ == '__main__':
 #     get_data_by_zone()

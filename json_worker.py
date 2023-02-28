@@ -1,13 +1,15 @@
 import json
 import os
-import time
+
 from datetime import datetime, timedelta
 from time import strftime, gmtime
 
 from dotenv import load_dotenv
 
-from hr_analyser import get_data_by_hr
-from power_analyser import get_data_by_power
+from get_gpx import get_data
+from gpx_maker import get_initial_data
+# from hr_analyser import get_data_by_hr
+# from power_analyser import get_data_by_power
 from main import get_list_of_activities
 from polyline_file import get_picture
 
@@ -92,6 +94,14 @@ def get_cadence():
         return average_cadence
 
 
+def get_ratio(check_power, check_hr):
+    if check_power[0] and check_hr[0] != 'Неизвестно':
+        ratio = round(check_power[0] / check_hr[0], 1)
+        return ratio
+    else:
+        return 'Неизвестно'
+
+
 def get_energy_spent():
     if 'kilojoules' in load_data[0]:
         check_calories = int(load_data[0]['kilojoules'])
@@ -102,14 +112,14 @@ def get_energy_spent():
 
 
 def generation_analyse():
-    get_data_by_hr()
-    get_data_by_power()
     get_list_of_activities()
 
     global load_data
     with open('data/data.json') as f:
         load_data = json.load(f)
+    get_data(load_data[0])
     get_picture(load_data[0])
+    get_initial_data(load_data[0]['id'])
 
     for i in range(0, len(load_data)):
         type_of_activity = get_type_of_activity()
@@ -124,31 +134,38 @@ def generation_analyse():
         max_speed = round(load_data[0]['max_speed'] * 3.6, 2)
         elev_high = int(load_data[0]['elev_high'])
         elev_low = int(load_data[0]['elev_low'])
-        check_heartrate = get_heartrate()
+        check_hr = get_heartrate()
         check_calories = get_energy_spent()
 
         if type_of_activity == 'Велосипед':
             check_power = get_power()
             check_cadence = get_cadence()
+            check_ratio = get_ratio(check_power, check_hr)
 
-            item_of_bike = [f'📅Дата – {date}{nl}'
-                            f'🚴🏼‍Вид тренировки – {type_of_activity}{nl}'
-                            f'📏Расстояние – {distance}км{nl}'
-                            f'⏰Время тренировки – {moving_time}{nl}'
-                            f'🏔️Набор высоты – {total_elevation_gain}м{nl}'
-                            f'🎖️Количество наград – {achievement_count}{nl}'
-                            f'👯Количество других атлетов – {athlete_count}{nl}'
-                            f'🏎Средняя скорость – {average_speed}км/ч{nl}'
-                            f'🔝Макс. скорость – {max_speed}км/ч{nl}️'
-                            f'🫀Средний пульс – {check_heartrate[0]}{nl}'
-                            f'❤️‍Максимальный пульс – {check_heartrate[1]}{nl}'
-                            f'⚖️Удельная мощность – {check_power[1]}{nl}'
-                            f'💪Средняя мощность – {check_power[2]}{nl}'
-                            f'🧨‍Макс. мощность – {check_power[3]}{nl}'
-                            f'🔄Средний каденс – {check_cadence}{nl}'
-                            f'⬆️Максимальная высота – {elev_high}м{nl}'
-                            f'⬇️Минимальная высота – {elev_low}м{nl}'
-                            f'🧁Потрачено калорий – {check_calories}{nl}']
+            item_of_bike = [
+                f'📅Дата – {date}{nl}'
+                f'🚴🏼‍Вид тренировки – {type_of_activity}{nl}'
+                f'⏰Время тренировки – {moving_time}{nl}'
+                f'📏Расстояние – {distance}км{nl}'
+                f'🏔️Набор высоты – {total_elevation_gain}м{nl}'
+                f'⬆️Максимальная высота – {elev_high}м{nl}'
+                f'⬇️Минимальная высота – {elev_low}м{nl}'
+                f'🎖️Количество наград – {achievement_count}{nl}'
+                f'👯Количество других атлетов – {athlete_count}{nl}'
+                f'🧁Потрачено калорий – {check_calories}{nl}'
+                f'{nl}'
+
+                f'🫀Средний пульс – {check_hr[0]}{nl}'
+                f'❤️‍Максимальный пульс – {check_hr[1]}{nl}'
+                f'⚖️Удельная мощность – {check_power[1]}{nl}'
+                f'💪🏻Усредненная мощность – {check_power[0]}{nl}'
+                f'💪Средняя мощность – {check_power[2]}{nl}'
+                f'🧨‍Макс. мощность – {check_power[3]}{nl}'
+                f'📶Мощность/пульс – {check_ratio}{nl}'
+                f'🏎Средняя скорость – {average_speed}км/ч{nl}'
+                f'🔝Макс. скорость – {max_speed}км/ч{nl}️'
+                f'🔄Средний каденс – {check_cadence}{nl}'
+            ]
 
             return item_of_bike
 
@@ -161,8 +178,8 @@ def generation_analyse():
                            f"🎖️Количество наград – {achievement_count}{nl}"
                            f"👯Количество других атлетов – {athlete_count}{nl}"
                            f"🏎Средняя темп – {average_pace}{nl}"
-                           f'🫀Средний пульс – {check_heartrate[0]}{nl}'
-                           f'❤️‍Максимальный пульс – {check_heartrate[1]}{nl}'
+                           f'🫀Средний пульс – {check_hr[0]}{nl}'
+                           f'❤️‍Максимальный пульс – {check_hr[1]}{nl}'
                            f'⬆️Максимальная высота – {elev_high}м{nl}'
                            f'⬇️Минимальная высота – {elev_low}м{nl}'
                            f'🧁Потрачено калорий – {check_calories}{nl}']

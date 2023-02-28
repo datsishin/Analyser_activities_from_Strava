@@ -1,5 +1,7 @@
 from matplotlib import pyplot as plt
+import matplotlib
 
+matplotlib.use('agg')
 nl = '\n'
 
 
@@ -26,7 +28,7 @@ def make_chart(list_of_zone, dicts_of_zones, option):
     ax.set_ylabel('%', fontdict=font_axes)
     ax.set_xlabel(type_of_measurement[option], fontdict=font_axes)
     ax.legend(title='Разбивка по зонам')
-    # ax.set_title(label=f'Распределение по зонам{nl}', fontdict=font)
+
     plt.title(f'Распределение по зонам{nl}', fontdict=font_title)
 
     fig.set_size_inches(10, 10)

@@ -1,13 +1,10 @@
 import xml.etree.ElementTree as ET
-
+import glob
 import matplotlib
-from matplotlib import pyplot as plt
 
 from graph_creater import make_chart
 
 matplotlib.use('agg')
-
-import glob
 
 glob.glob('./*.gpx')
 
@@ -70,8 +67,6 @@ def get_data_by_zone():
         dicts_of_zones_by_hr.update({keyword: new_value})
 
     make_chart(list_of_zone_by_hr, dicts_of_zones_by_hr)
-
-
 
 # if __name__ == '__main__':
 #     get_data_by_zone()
