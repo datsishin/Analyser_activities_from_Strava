@@ -1,3 +1,4 @@
+import glob
 import json
 import os
 
@@ -108,14 +109,14 @@ def get_energy_spent():
         return check_calories
 
 
-def generation_analyse():
-    get_list_of_activities()
+def generation_analyse(user_id: int):
+    get_list_of_activities(user_id)
 
     global load_data
     with open('data/data.json') as f:
         load_data = json.load(f)
-    get_picture(load_data[0])
-    get_initial_data(load_data[0]['id'])
+    # get_picture(load_data[0])
+    get_initial_data(load_data[0]['id'], user_id)
 
     for i in range(0, len(load_data)):
         type_of_activity = get_type_of_activity()
@@ -181,3 +182,7 @@ def generation_analyse():
                            f'🧁Потрачено калорий – {check_calories}{nl}']
 
             return item_of_run
+
+    # files = glob.glob('data/*')
+    # for f in files:
+    #     os.remove(f)

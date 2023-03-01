@@ -1,11 +1,21 @@
-from graph_creater import make_chart
+import os
 
+from graph_creater import make_chart
+from dotenv import load_dotenv
+
+load_dotenv()
 nl = '\n'
 
-ftp = 220
+first_user = os.getenv('FIRST_USER_ID')
+second_user = os.getenv('SECOND_USER_ID')
 
 
-def get_power_statistics(power_data: list):
+def get_power_statistics(power_data: list, user_id: int):
+    users_data = {first_user: {'ftp': 220},
+                  second_user: {'ftp': 150}}
+
+    ftp = users_data[f'{user_id}']['ftp']
+
     zone_1_by_power = [0, ftp * 0.55]
     zone_2_by_power = [ftp * 0.55, ftp * 0.75]
     zone_3_by_power = [ftp * 0.75, ftp * 0.9]

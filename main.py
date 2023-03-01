@@ -7,24 +7,38 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-url_refresh_token = 'https://www.strava.com/oauth/token'
-refresh_token = os.getenv('REFRESH_TOKEN')
-client_id = os.getenv('CLIENT_ID')
-client_secret = os.getenv('CLIENT_SECRET')
-
 # Специальный символ для переноса строк внутри f-строк
 nl = '\n'
 
+first_user = os.getenv('FIRST_USER_ID')
+second_user = os.getenv('SECOND_USER_ID')
 
-def get_fresh_api_token():
-    data = {'client_id': client_id,
-            'client_secret': client_secret,
-            'refresh_token': refresh_token,
+client_data = {first_user: {'client_id': os.getenv('FIRST_CLIENT_ID'),
+                            'access_token': os.getenv('FIRST_ACCESS_TOKEN'),
+                            'refresh_token': os.getenv('FIRST_REFRESH_TOKEN'),
+                            'client_secret': os.getenv('FIRST_CLIENT_SECRET')},
+               second_user: {'client_id': os.getenv('SECOND_CLIENT_ID'),
+                             'access_token': os.getenv('SECOND_ACCESS_TOKEN'),
+                             'refresh_token': os.getenv('SECOND_REFRESH_TOKEN'),
+                             'client_secret': os.getenv('SECOND_CLIENT_SECRET')}}
+
+
+def get_fresh_api_token(user_id: int):
+    url_refresh_token = 'https://www.strava.com/oauth/token'
+
+    data = {'client_id': client_data[f'{user_id}']['client_id'],
+            'client_secret': client_data[f'{user_id}']['client_secret'],
+            'refresh_token': client_data[f'{user_id}']['refresh_token'],
             'grant_type': 'refresh_token'}
+
     response = requests.post(url_refresh_token, data=data).json()
     new_access_token = response['access_token']
-    dotenv.set_key('.env', 'ACCESS_TOKEN', new_access_token, quote_mode='never')
-    return new_access_token
+    if str(user_id) == first_user:
+        dotenv.set_key('.env', 'FIRST_ACCESS_TOKEN', new_access_token, quote_mode='never')
+        return new_access_token
+    elif str(user_id) == second_user:
+        dotenv.set_key('.env', 'SECOND_ACCESS_TOKEN', new_access_token, quote_mode='never')
+        return new_access_token
 
 
 def check_change_of_mileage(new_mileage: int) -> str:
@@ -67,25 +81,26 @@ def get_mileage_for_service():
             return check_change_of_mileage(new_mileage)
 
 
-def get_list_of_activities():
+def get_list_of_activities(user_id: int):
     url = 'https://www.strava.com/api/v3/athlete/activities'
-    token = os.getenv('ACCESS_TOKEN')
+    token = client_data[f'{user_id}']['access_token']
     params = {'access_token': token}
 
-    first_data = status_code_checker(url, params)
+    first_data = status_code_checker(url, params, user_id)
 
     if type(first_data) == list:
         with open('data/data.json', 'w') as first_file:
             json.dump(first_data, first_file)
+
     else:
         params = {'access_token': first_data}
-        data = status_code_checker(url, params)
+        data = status_code_checker(url, params, user_id)
         if type(data) == list:
             with open('data/data.json', 'w') as file:
                 json.dump(data, file)
 
 
-def status_code_checker(url, params):
+def status_code_checker(url, params, user_id: int):
     response = requests.get(url, params=params)
     status = response.status_code
 
@@ -95,7 +110,7 @@ def status_code_checker(url, params):
             return response.json()
 
         elif status == 401:
-            return get_fresh_api_token()
+            return get_fresh_api_token(user_id)
 
         elif status == 403:
             print('VPN isn\'t connect')
@@ -108,3 +123,7 @@ def status_code_checker(url, params):
 
         elif status == 500:
             print("Strava's API is broken, please try again later")
+
+
+# if __name__ == '__main__':
+#     get_list_of_activities(720161048)
