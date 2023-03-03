@@ -1,4 +1,3 @@
-import glob
 import json
 import os
 
@@ -9,7 +8,8 @@ from dotenv import load_dotenv
 
 from gpx_maker import get_initial_data
 from main import get_list_of_activities
-from polyline_file import get_picture
+
+# from polyline_file import get_picture
 
 load_dotenv()
 
@@ -186,3 +186,8 @@ def generation_analyse(user_id: int):
     # files = glob.glob('data/*')
     # for f in files:
     #     os.remove(f)
+
+# if __name__ == '__main__':
+#     generation_analyse(720161048)
+
+# 8637562087

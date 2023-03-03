@@ -12,7 +12,7 @@ second_user = os.getenv('SECOND_USER_ID')
 
 def get_hr_statistics(hr_data: list, user_id: int):
     users_data = {first_user: {'hr_max': 202, 'threshold': 185},
-                  second_user: {'hr_max': 200, 'threshold': 175}}
+                  second_user: {'hr_max': 220, 'threshold': 175}}
 
     threshold = users_data[f'{user_id}']['threshold']
     hr_max = users_data[f'{user_id}']['hr_max']

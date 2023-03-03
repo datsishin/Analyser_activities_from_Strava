@@ -31,25 +31,26 @@ def get_training_data(message):
     user_id = message.chat.id
     text = generation_analyse(user_id)
     bot.send_message(user_id, text=text)
-    # list_of_file = os.listdir('media')
-    # count_of_picture = len([name for name in list_of_file if os.path.isfile(name)])
-    #
-    # for i in count_of_picture:
-    #     with open(list_of_file[i], 'rb') as i
-    #     i+=1
-    #
-    # bot.send_media_group(user_id, [InputMediaPhoto(i)], disable_notification=True)
-    # InputMediaPhoto(f2)],
-    # disable_notification=True)
-    # with open('media/graph_by_power.png', 'rb') as f1: \
-    # open('media/graph_by_hr.png', 'rb') as f2:
-    # open('media/maps.png', 'rb') as f3:
-    # bot.send_media_group(user_id, [InputMediaPhoto(f1)],
-    # InputMediaPhoto(f2)],
-    # disable_notification=True)
-    # InputMediaPhoto(f3)],
+
+    map_path = 'media/map.png'
+    power_path = 'media/graph_by_power.png'
+    hr_path = 'media/graph_by_hr.png'
+
+    list_of_pic = []
+
+    if os.path.exists(map_path):
+        list_of_pic.append(InputMediaPhoto(open(map_path, 'rb')))
+    if os.path.exists(power_path):
+        list_of_pic.append(InputMediaPhoto(open(power_path, 'rb')))
+    if os.path.exists(hr_path):
+        list_of_pic.append(InputMediaPhoto(open(hr_path, 'rb')))
+
+    bot.send_media_group(user_id, list_of_pic, disable_notification=True)
 
     files = glob.glob('media/*')
+
+    file = 'data/data.json'
+    os.remove(file)
     for f in files:
         os.remove(f)
 

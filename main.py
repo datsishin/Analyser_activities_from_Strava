@@ -124,6 +124,5 @@ def status_code_checker(url, params, user_id: int):
         elif status == 500:
             print("Strava's API is broken, please try again later")
 
-
 # if __name__ == '__main__':
 #     get_list_of_activities(720161048)

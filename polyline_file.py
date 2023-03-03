@@ -45,4 +45,4 @@ def get_picture(load_data: dict):
 
     img_data = m._to_png(1)
     img = Image.open(io.BytesIO(img_data))
-    img.save('media/maps.png')
+    img.save('media/mappoly.png')

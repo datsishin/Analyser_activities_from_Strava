@@ -167,4 +167,4 @@ cython_debug/
 *.png
 /media/
 /data/
-!/config.py
+config.py
