@@ -21,8 +21,8 @@ run = ['забег', 'run']
 nl = '\n'
 
 
-def get_stat():
-    get_list_of_activities()
+def get_stat(user_id: int):
+    get_list_of_activities(user_id)
 
     global load_data
     with open('data/data.json') as f:

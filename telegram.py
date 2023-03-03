@@ -58,7 +58,7 @@ def get_training_data(message):
 @bot.message_handler(commands=['time_statistics'])
 def get_statistics(message):
     user_id = message.chat.id
-    data = get_stat()
+    data = get_stat(user_id)
     bot.send_message(user_id, text=f'Время тренировок за последние 7 дней:{nl}{data[0]}'
                                    f'{nl}'
                                    f'{nl}'

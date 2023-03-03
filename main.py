@@ -2,7 +2,7 @@ import json
 import os
 
 import dotenv
-import requests
+import requests as r
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -31,7 +31,7 @@ def get_fresh_api_token(user_id: int):
             'refresh_token': client_data[f'{user_id}']['refresh_token'],
             'grant_type': 'refresh_token'}
 
-    response = requests.post(url_refresh_token, data=data).json()
+    response = r.post(url_refresh_token, data=data).json()
     new_access_token = response['access_token']
     if str(user_id) == first_user:
         dotenv.set_key('.env', 'FIRST_ACCESS_TOKEN', new_access_token, quote_mode='never')
@@ -101,7 +101,7 @@ def get_list_of_activities(user_id: int):
 
 
 def status_code_checker(url, params, user_id: int):
-    response = requests.get(url, params=params)
+    response = r.get(url, params=params)
     status = response.status_code
 
     while True:
