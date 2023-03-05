@@ -6,6 +6,7 @@ from time import strftime, gmtime
 
 from dotenv import load_dotenv
 
+from connect_mongo_db import get_last_training
 from gpx_maker import get_initial_data
 from main import get_list_of_activities
 
@@ -46,7 +47,7 @@ def get_stat(user_id: int):
 
 
 def get_type_of_activity():
-    type_of_activity = str.lower(load_data[0]['type'])
+    type_of_activity = str.lower(load_data['type'])
     if type_of_activity in bikes:
         return 'Велосипед'
     if type_of_activity in run:
@@ -56,10 +57,10 @@ def get_type_of_activity():
 
 
 def get_heartrate():
-    has_heartrate = load_data[0]['has_heartrate']
+    has_heartrate = load_data['has_heartrate']
     if has_heartrate:
-        average_heartrate = int(load_data[0]['average_heartrate'])
-        max_heartrate = int(load_data[0]['max_heartrate'])
+        average_heartrate = int(load_data['average_heartrate'])
+        max_heartrate = int(load_data['max_heartrate'])
         return average_heartrate, max_heartrate
     else:
         average_heartrate = 'Неизвестно'
@@ -68,11 +69,11 @@ def get_heartrate():
 
 
 def get_power():
-    has_powermeter = load_data[0]['device_watts']
+    has_powermeter = load_data['device_watts']
     if has_powermeter:
-        weighted_average_watts = int(load_data[0]['weighted_average_watts'])
-        average_power = int(load_data[0]['average_watts'])
-        max_power = int(load_data[0]['max_watts'])
+        weighted_average_watts = int(load_data['weighted_average_watts'])
+        average_power = int(load_data['average_watts'])
+        max_power = int(load_data['max_watts'])
         relative_power = round(weighted_average_watts / float(user_weight), 1)
         return weighted_average_watts, relative_power, average_power, max_power
     else:
@@ -84,8 +85,8 @@ def get_power():
 
 
 def get_cadence():
-    if 'average_cadence' in load_data[0]:
-        average_cadence = int(load_data[0]['average_cadence'])
+    if 'average_cadence' in load_data:
+        average_cadence = int(load_data['average_cadence'])
         return average_cadence
     else:
         average_cadence = 'Неизвестно'
@@ -101,8 +102,8 @@ def get_ratio(check_power, check_hr):
 
 
 def get_energy_spent():
-    if 'kilojoules' in load_data[0]:
-        check_calories = int(load_data[0]['kilojoules'])
+    if 'kilojoules' in load_data:
+        check_calories = int(load_data['kilojoules'])
         return check_calories
     else:
         check_calories = 'Неизвестно'
@@ -111,26 +112,25 @@ def get_energy_spent():
 
 def generation_analyse(user_id: int):
     get_list_of_activities(user_id)
-
     global load_data
-    with open('data/data.json') as f:
-        load_data = json.load(f)
-    # get_picture(load_data[0])
-    get_initial_data(load_data[0]['id'], user_id)
+    load_data = get_last_training(user_id)
+
+    # get_picture(load_data)
+    get_initial_data(load_data['id'], user_id)
 
     for i in range(0, len(load_data)):
         type_of_activity = get_type_of_activity()
-        date = datetime.strptime(load_data[0]['start_date_local'], '%Y-%m-%dT%H:%M:%SZ').date()
-        distance = round(load_data[0]['distance'] / 1000, 2)
-        moving_time = strftime("%H:%M:%S", gmtime(load_data[0]['moving_time']))
-        total_elevation_gain = int(load_data[0]['total_elevation_gain'])
-        achievement_count = load_data[0]['achievement_count']
-        athlete_count = load_data[0]['athlete_count'] - 1
-        average_pace = strftime("%M:%S", gmtime((1 / load_data[0]['average_speed'] * 1000)))
-        average_speed = round(load_data[0]['average_speed'] * 3.6, 2)
-        max_speed = round(load_data[0]['max_speed'] * 3.6, 2)
-        elev_high = int(load_data[0]['elev_high'])
-        elev_low = int(load_data[0]['elev_low'])
+        date = datetime.strptime(load_data['start_date_local'], '%Y-%m-%dT%H:%M:%SZ').date()
+        distance = round(load_data['distance'] / 1000, 2)
+        moving_time = strftime("%H:%M:%S", gmtime(load_data['moving_time']))
+        total_elevation_gain = int(load_data['total_elevation_gain'])
+        achievement_count = load_data['achievement_count']
+        athlete_count = load_data['athlete_count'] - 1
+        average_pace = strftime("%M:%S", gmtime((1 / load_data['average_speed'] * 1000)))
+        average_speed = round(load_data['average_speed'] * 3.6, 2)
+        max_speed = round(load_data['max_speed'] * 3.6, 2)
+        elev_high = int(load_data['elev_high'])
+        elev_low = int(load_data['elev_low'])
         check_hr = get_heartrate()
         check_calories = get_energy_spent()
 
@@ -182,12 +182,3 @@ def generation_analyse(user_id: int):
                            f'🧁Потрачено калорий – {check_calories}{nl}']
 
             return item_of_run
-
-    # files = glob.glob('data/*')
-    # for f in files:
-    #     os.remove(f)
-
-# if __name__ == '__main__':
-#     generation_analyse(720161048)
-
-# 8637562087

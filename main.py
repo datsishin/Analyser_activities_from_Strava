@@ -5,6 +5,8 @@ import dotenv
 import requests as r
 from dotenv import load_dotenv
 
+from connect_mongo_db import post_to_db
+
 load_dotenv()
 
 # Специальный символ для переноса строк внутри f-строк
@@ -89,8 +91,9 @@ def get_list_of_activities(user_id: int):
     first_data = status_code_checker(url, params, user_id)
 
     if type(first_data) == list:
-        with open('data/data.json', 'w') as first_file:
-            json.dump(first_data, first_file)
+        post_to_db(first_data)
+        # with open('data/data.json', 'w') as first_file:
+        #     json.dump(first_data, first_file)
 
     else:
         params = {'access_token': first_data}
@@ -123,6 +126,3 @@ def status_code_checker(url, params, user_id: int):
 
         elif status == 500:
             print("Strava's API is broken, please try again later")
-
-# if __name__ == '__main__':
-#     get_list_of_activities(720161048)

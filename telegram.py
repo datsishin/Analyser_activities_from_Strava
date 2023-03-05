@@ -35,7 +35,6 @@ def get_training_data(message):
     map_path = 'media/map.png'
     power_path = 'media/graph_by_power.png'
     hr_path = 'media/graph_by_hr.png'
-
     list_of_pic = []
 
     if os.path.exists(map_path):
@@ -48,9 +47,6 @@ def get_training_data(message):
     bot.send_media_group(user_id, list_of_pic, disable_notification=True)
 
     files = glob.glob('media/*')
-
-    file = 'data/data.json'
-    os.remove(file)
     for f in files:
         os.remove(f)
 

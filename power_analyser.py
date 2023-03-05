@@ -66,6 +66,3 @@ def get_power_statistics(power_data: list, user_id: int):
     option = 'power'
 
     make_chart(list_of_zone, dicts_of_zones, option)
-
-# if __name__ == '__main__':
-#     get_power_statistics()

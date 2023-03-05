@@ -68,6 +68,3 @@ def get_hr_statistics(hr_data: list, user_id: int):
     option = 'hr'
 
     make_chart(list_of_zone, dicts_of_zones, option)
-
-# if __name__ == '__main__':
-#     get_data_by_zone()
