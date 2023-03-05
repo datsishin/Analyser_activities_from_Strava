@@ -22,30 +22,6 @@ run = ['забег', 'run']
 nl = '\n'
 
 
-def get_stat(user_id: int):
-    get_list_of_activities(user_id)
-
-    global load_data
-    with open('data/data.json') as f:
-        load_data = json.load(f)
-
-    today = datetime.now().date()
-    week_total_seconds = 0
-    month_total_seconds = 0
-    for i in range(0, len(load_data)):
-        date_of_activity = datetime.strptime(load_data[i]['start_date_local'], '%Y-%m-%dT%H:%M:%SZ').date()
-        if today - date_of_activity < timedelta(days=7):
-            week_total_seconds += load_data[i]['moving_time']
-            month_total_seconds += load_data[i]['moving_time']
-        if timedelta(days=7) < today - date_of_activity < timedelta(days=31):
-            month_total_seconds += load_data[i]['moving_time']
-
-    week_total_time = str(timedelta(seconds=week_total_seconds))
-    month_total_time = str(timedelta(seconds=month_total_seconds))
-    list_of_time = [week_total_time, month_total_time]
-    return list_of_time
-
-
 def get_type_of_activity():
     type_of_activity = str.lower(load_data['type'])
     if type_of_activity in bikes:

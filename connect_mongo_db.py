@@ -27,4 +27,3 @@ def get_last_training(user_id: int):
     users_data = {first_user: first_athlete_id,
                   second_user: second_athlete_id}
     return collection.find_one({'athlete.id': users_data[f'{user_id}']}, sort=[('_id', pymongo.DESCENDING)])
-

@@ -5,8 +5,9 @@ import telebot
 import os
 from dotenv import load_dotenv
 
-from json_worker import generation_analyse, get_stat
+from json_worker import generation_analyse
 from main import get_mileage_for_service
+from stats_graber import get_count_of_training
 
 load_dotenv()
 
@@ -54,11 +55,14 @@ def get_training_data(message):
 @bot.message_handler(commands=['time_statistics'])
 def get_statistics(message):
     user_id = message.chat.id
-    data = get_stat(user_id)
+    data = get_count_of_training(user_id)
     bot.send_message(user_id, text=f'Время тренировок за последние 7 дней:{nl}{data[0]}'
                                    f'{nl}'
                                    f'{nl}'
-                                   f'Время тренировок за последние 30 дней:{nl}{data[1]}')
+                                   f'Время тренировок за последние 30 дней:{nl}{data[1]}'
+                                   f'{nl}'
+                                   f'{nl}'
+                                   f'Время тренировок за последние 365 дней:{nl}{data[2]}')
 
 
 @bot.message_handler(commands=['service'])
