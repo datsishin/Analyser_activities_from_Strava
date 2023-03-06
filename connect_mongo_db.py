@@ -23,9 +23,9 @@ def db_connect(user_id: int):
     return collection
 
 
-def post_to_db(first_data: list, user_id: int):
+def post_to_db(response: list, user_id: int):
     coll = db_connect(user_id)
-    document = first_data[0]
+    document = response[0]
     if coll.find_one(filter={'id': document['id']}) is None:
         coll.insert_one(document)
 
@@ -33,7 +33,3 @@ def post_to_db(first_data: list, user_id: int):
 def get_last_training(user_id: int):
     coll = db_connect(user_id)
     return coll.find_one({'athlete.id': users_data[f'{user_id}']}, sort=[('_id', pymongo.DESCENDING)])
-
-
-# if __name__ == '__main__':
-#     db_connect(666785382)
