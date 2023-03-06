@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 from json_worker import generation_analyse
 from main import get_mileage_for_service
-from stats_graber import get_count_of_training
+from stats_graber import get_volume_stats
 
 load_dotenv()
 
@@ -55,7 +55,7 @@ def get_training_data(message):
 @bot.message_handler(commands=['time_statistics'])
 def get_statistics(message):
     user_id = message.chat.id
-    data = get_count_of_training(user_id)
+    data = get_volume_stats(user_id)
     bot.send_message(user_id, text=f'Время тренировок за последние 7 дней:{nl}{data[0]}'
                                    f'{nl}'
                                    f'{nl}'

@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 
 import requests as r
 
+from main import get_fresh_api_token, status_code_checker
+
 load_dotenv()
 
 url = 'https://www.strava.com/api/v3/athlete/activities'
@@ -15,10 +17,10 @@ users_data = {first_user: {'token': os.getenv('FIRST_ACCESS_TOKEN')},
               second_user: {'token': os.getenv('SECOND_ACCESS_TOKEN')}}
 
 
-def get_count_of_training(user_id: int):
+def get_volume_stats(user_id: int):
     token = users_data[f'{user_id}']['token']
-    headers = {'Authorization': 'Bearer ' + token}
-    params = {'per_page': 200,
+    params = {'access_token': token,
+              'per_page': 200,
               'page': 1}
 
     today = datetime.now().date()
@@ -26,8 +28,13 @@ def get_count_of_training(user_id: int):
     month_total_seconds = 0
     year_total_seconds = 0
 
+    response = status_code_checker(url, params, user_id)
+    if type(response) == str:
+        new_token = response
+        params['access_token'] = new_token
+
     while True:
-        response = r.get(url, params=params, headers=headers).json()
+        response = r.get(url, params=params).json()
 
         if len(response) != 0:
             for i in range(0, len(response)):
@@ -42,8 +49,8 @@ def get_count_of_training(user_id: int):
                 if timedelta(days=31) < today - date_of_activity <= timedelta(days=365):
                     year_total_seconds += response[i]['moving_time']
 
-            new_page = params['page'] + 1
-            params['page'] = new_page
+            next_page = params['page'] + 1
+            params['page'] = next_page
 
         break
 

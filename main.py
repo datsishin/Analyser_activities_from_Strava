@@ -88,22 +88,19 @@ def get_list_of_activities(user_id: int):
     token = client_data[f'{user_id}']['access_token']
     params = {'access_token': token}
 
-    first_data = status_code_checker(url, params, user_id)
+    response = status_code_checker(url, params, user_id)
 
-    if type(first_data) == list:
-        post_to_db(first_data)
-        # with open('data/data.json', 'w') as first_file:
-        #     json.dump(first_data, first_file)
+    if type(response) == list:
+        post_to_db(response, user_id)
 
     else:
-        params = {'access_token': first_data}
-        data = status_code_checker(url, params, user_id)
-        if type(data) == list:
-            with open('data/data.json', 'w') as file:
-                json.dump(data, file)
+        params = {'access_token': response}
+        response = status_code_checker(url, params, user_id)
+        if type(response) == list:
+            post_to_db(response, user_id)
 
 
-def status_code_checker(url, params, user_id: int):
+def status_code_checker(url, params, user_id):
     response = r.get(url, params=params)
     status = response.status_code
 
