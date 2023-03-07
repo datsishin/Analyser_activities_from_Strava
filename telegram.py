@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 from json_worker import generation_analyse
 from main import get_mileage_for_service
-from stats_graber import get_volume_stats
+from stats_graber import get_volume_stats, get_full_stats
 
 load_dotenv()
 
@@ -62,13 +62,23 @@ def get_statistics(message):
                                    f'Время тренировок за последние 30 дней:{nl}{data[1]}'
                                    f'{nl}'
                                    f'{nl}'
-                                   f'Время тренировок за последние 365 дней:{nl}{data[2]}')
+                                   f'Время тренировок за последние 365 дней:{nl}{data[2]}'
+                                   f'{nl}'
+                                   f'{nl}'
+                                   f'Время тренировок за все время:{nl}{data[3]}')
 
 
 @bot.message_handler(commands=['service'])
 def get_service_info(message):
     user_id = message.chat.id
     text = get_mileage_for_service()
+    bot.send_message(user_id, text=text)
+
+
+@bot.message_handler(commands=['get_full_statistics'])
+def get_fully_stat(message):
+    user_id = message.chat.id
+    text = get_full_stats(user_id)
     bot.send_message(user_id, text=text)
 
 
