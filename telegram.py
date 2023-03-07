@@ -1,4 +1,6 @@
 import glob
+import logging
+import time
 
 from telebot.types import InputMediaPhoto
 import telebot
@@ -82,4 +84,15 @@ def get_fully_stat(message):
     bot.send_message(user_id, text=text)
 
 
-bot.polling(none_stop=True)
+while True:
+    try:
+        logging.info("Bot running")
+        bot.polling(none_stop=True, timeout=10)
+        break
+    except telebot.apihelper.ApiException as ex:
+        logging.error(ex)
+        bot.stop_polling()
+
+        time.sleep(3)
+
+        logging.info("Running again!")
