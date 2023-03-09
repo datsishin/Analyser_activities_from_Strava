@@ -19,7 +19,9 @@ users_data = {first_user: first_athlete_id,
 def db_connect(user_id: int):
     client = MongoClient('localhost', 27017)
     db = client['training_db']
-    collection = db[f'{users_data[f"{user_id}"]}_training']
+    athlete_id = users_data[f'{user_id}']
+    collection = db[f'{athlete_id}_training']
+    collection.create_index([('athlete.id', pymongo.DESCENDING)])
     return collection
 
 
@@ -43,4 +45,6 @@ def post_to_db_many(list_of_all_training: list, user_id: int) -> str:
 
 def get_last_training(user_id: int):
     coll = db_connect(user_id)
-    return coll.find_one({'athlete.id': users_data[f'{user_id}']}, sort=[('_id', pymongo.DESCENDING)])
+    list_of_date = list(coll.find({}).sort([("start_date_local", -1)]))
+    max_date = list_of_date[0]
+    return max_date
