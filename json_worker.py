@@ -1,7 +1,7 @@
 import json
 import os
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from time import strftime, gmtime
 
 from dotenv import load_dotenv
@@ -19,6 +19,7 @@ user_weight = os.getenv('USER_WEIGHT')
 bikes = ['заезд', 'виртуальный заезд', 'ride', 'virtualride']
 run = ['забег', 'run']
 
+# Специальный символ для переноса строки внутри f-строк
 nl = '\n'
 
 

@@ -2,6 +2,8 @@ from matplotlib import pyplot as plt
 import matplotlib
 
 matplotlib.use('agg')
+
+# Специальный символ для переноса строки внутри f-строк
 nl = '\n'
 
 

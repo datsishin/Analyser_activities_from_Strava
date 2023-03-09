@@ -2,7 +2,7 @@ import os
 import requests as r
 from dotenv import load_dotenv
 from hr_analyser import get_hr_statistics
-from main import get_fresh_api_token, status_code_checker
+from main import status_code_checker
 from power_analyser import get_power_statistics
 
 load_dotenv()

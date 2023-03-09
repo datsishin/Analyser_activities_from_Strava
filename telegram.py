@@ -20,6 +20,7 @@ second_user_id = os.getenv('SECOND_USER_ID')
 
 bot = telebot.TeleBot(token)
 
+# Специальный символ для переноса строки внутри f-строк
 nl = '\n'
 
 
@@ -73,7 +74,7 @@ def get_statistics(message):
 @bot.message_handler(commands=['service'])
 def get_service_info(message):
     user_id = message.chat.id
-    text = get_mileage_for_service()
+    text = get_mileage_for_service(user_id)
     bot.send_message(user_id, text=text)
 
 
