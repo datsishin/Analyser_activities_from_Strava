@@ -1,6 +1,6 @@
 from datetime import datetime
 from time import strftime, gmtime
-from db.worker import get_last_training
+from db.training import get_last_training
 from processors.gpx_maker import get_initial_data
 from users import users_data
 

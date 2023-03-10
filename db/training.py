@@ -1,19 +1,18 @@
 from main import get_last_activity
 from db.mongo import db_connect
-from users import users_data
 
 # Специальный символ для переноса строки внутри f-строк
 nl = '\n'
 
 
-def post_to_db(response: list, user_id: int):
+def post_training(response: list, user_id: int):
     coll = db_connect(user_id, param='training')
     document = response[0]
     if coll.find_one(filter={'id': document['id']}) is None:
         coll.insert_one(document)
 
 
-def post_to_db_many(list_of_all_training: list, user_id: int) -> str:
+def post_many_training(list_of_all_training: list, user_id: int) -> str:
     coll = db_connect(user_id, param='training')
     count = len(list_of_all_training)
     for i in range(0, count):

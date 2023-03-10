@@ -1,6 +1,6 @@
 import requests as r
 from datetime import datetime, timedelta
-from db.worker import post_to_db_many
+from db.training import post_many_training
 from db.mongo import db_connect
 from main import status_code_checker
 from users import users_data
@@ -33,7 +33,7 @@ def get_list_of_training(user_id: int) -> list:
         if count == 0:
             break
 
-    post_to_db_many(list_of_training, user_id)
+    post_many_training(list_of_training, user_id)
     return list_of_training
 
 
@@ -74,4 +74,4 @@ def get_volume_stats(user_id: int) -> list:
 
 def get_full_stats(user_id: int) -> str:
     list_of_all_training = get_list_of_training(user_id)
-    return post_to_db_many(list_of_all_training, user_id)
+    return post_many_training(list_of_all_training, user_id)

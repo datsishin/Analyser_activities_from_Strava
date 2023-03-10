@@ -8,6 +8,7 @@ from telebot import types
 from telebot.types import InputMediaPhoto
 import telebot
 
+from db.service_of_bike import cleaning
 from processors.json_worker import generation_analyse
 from main import get_mileage
 from processors.stats_graber import get_volume_stats, get_full_stats
@@ -71,6 +72,12 @@ def get_fully_stat(message):
     bot.send_message(user_id, text=text)
 
 
+def service(message, param: str):
+    user_id = message.chat.id
+    text = cleaning(message, param)
+    bot.send_message(user_id, text, reply_markup=service_keyboard())
+
+
 @bot.message_handler(commands=['start'])
 def start(message):
     text = f'Привет, {message.chat.first_name}!{nl}' \
@@ -122,6 +129,15 @@ def bot_message(message):
             chat_id = message.chat.id
             text = f'Выбери интересующий пункт меню ⬇'
             bot.send_message(chat_id, text, reply_markup=service_keyboard())
+
+        if message.text == 'Почистил цепь':
+            service(message, param='chain')
+
+        if message.text == 'Почистил привод':
+            service(message, param='drive')
+
+        if message.text == 'Последнее обслуживание':
+            pass
 
         if message.text == 'Выход':
             chat_id = message.chat.id
