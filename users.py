@@ -3,6 +3,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+global nl
+nl = '\n'
+
 first_user = os.getenv('FIRST_USER_ID')
 second_user = os.getenv('SECOND_USER_ID')
 

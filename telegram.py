@@ -1,12 +1,12 @@
 import glob
 import logging
 import time
+import os
 
+from dotenv import load_dotenv
 from telebot import types
 from telebot.types import InputMediaPhoto
 import telebot
-import os
-from dotenv import load_dotenv
 
 from processors.json_worker import generation_analyse
 from main import get_mileage
@@ -14,24 +14,12 @@ from processors.stats_graber import get_volume_stats, get_full_stats
 
 load_dotenv()
 
-token = os.getenv('TELEGRAM_API_TOKEN')
-
-first_user_id = os.getenv('FIRST_USR_ID')
-second_user_id = os.getenv('SECOND_USER_ID')
-
-bot = telebot.TeleBot(token)
+bot = telebot.TeleBot(os.getenv('TELEGRAM_API_TOKEN'))
 
 # Специальный символ для переноса строки внутри f-строк
 nl = '\n'
 
 
-@bot.message_handler(commands=['start'])
-def say_hi(message):
-    text = 'Hi!'
-    bot.send_message(message.chat.id, text=text)
-
-
-@bot.message_handler(commands=['get_last_training'])
 def get_training_data(message):
     user_id = message.chat.id
     text = generation_analyse(user_id)
@@ -56,7 +44,6 @@ def get_training_data(message):
         os.remove(f)
 
 
-@bot.message_handler(commands=['time_statistics'])
 def get_statistics(message):
     user_id = message.chat.id
     data = get_volume_stats(user_id)
@@ -72,31 +59,48 @@ def get_statistics(message):
                                    f'Время тренировок за все время:{nl}{data[3]}')
 
 
-@bot.message_handler(commands=['service'])
 def get_service_info(message):
     user_id = message.chat.id
     text = get_mileage(user_id)
     bot.send_message(user_id, text=text)
 
 
-@bot.message_handler(commands=['get_full_statistics'])
 def get_fully_stat(message):
     user_id = message.chat.id
     text = get_full_stats(user_id)
     bot.send_message(user_id, text=text)
 
 
-@bot.message_handler(commands=['menu'])
-def menu(message):
+@bot.message_handler(commands=['start'])
+def start(message):
+    text = f'Привет, {message.chat.first_name}!{nl}' \
+           f'Выбери интересующий пункт меню ⬇'
+    bot.send_message(message.chat.id, text, reply_markup=main_keyboard())
+
+
+def main_keyboard():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
     item1 = types.KeyboardButton('Последняя тренировка')
     item2 = types.KeyboardButton('Статистика объема')
-    item3 = types.KeyboardButton('Узнать пробег')
-    item4 = types.KeyboardButton('Загрузить все тренировки')
+    item3 = types.KeyboardButton('Загрузить тренировки')
+    item4 = types.KeyboardButton('Пробег')
+    item5 = types.KeyboardButton('Обслуживание')
+
+    markup.add(item1, item2, item3, item4, item5)
+    return markup
+
+
+def service_keyboard():
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+
+    item1 = types.KeyboardButton('Почистил цепь')
+    item2 = types.KeyboardButton('Почистил привод')
+    item3 = types.KeyboardButton('Последнее обслуживание')
+    item4 = types.KeyboardButton('Выход')
 
     markup.add(item1, item2, item3, item4)
-    bot.send_message(message.chat.id, 'Активировано меню обслуживания', reply_markup=markup)
+    return markup
 
 
 @bot.message_handler(content_types=['text'])
@@ -108,11 +112,21 @@ def bot_message(message):
         if message.text == 'Статистика объема':
             get_statistics(message)
 
-        if message.text == 'Узнать пробег':
+        if message.text == 'Пробег':
             get_service_info(message)
 
-        if message.text == 'Загрузить все тренировки':
+        if message.text == 'Загрузить тренировки':
             get_fully_stat(message)
+
+        if message.text == 'Обслуживание':
+            chat_id = message.chat.id
+            text = f'Выбери интересующий пункт меню ⬇'
+            bot.send_message(chat_id, text, reply_markup=service_keyboard())
+
+        if message.text == 'Выход':
+            chat_id = message.chat.id
+            text = f'Выбери интересующий пункт меню ⬇'
+            bot.send_message(chat_id, text, reply_markup=main_keyboard())
 
 
 while True:
@@ -124,6 +138,6 @@ while True:
         logging.error(ex)
         bot.stop_polling()
 
-        time.sleep(3)
+        time.sleep(1)
 
         logging.info("Running again!")

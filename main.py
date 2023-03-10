@@ -2,7 +2,8 @@ import os
 
 import dotenv
 import requests as r
-import db.worker
+
+from service import check_mileage
 from users import users_data, first_user, second_user
 
 # Специальный символ для переноса строки внутри f-строк
@@ -38,7 +39,7 @@ def get_mileage(user_id: int) -> list:
         if type(data) == dict:
             name = data['name']
             new_mileage = int(data['converted_distance'])
-            return db.worker.check_mileage(name, new_mileage, user_id)
+            return check_mileage(name, new_mileage, user_id)
 
         else:
             params = {'access_token': data}
@@ -46,7 +47,7 @@ def get_mileage(user_id: int) -> list:
             if type(data) == dict:
                 name = data['name']
                 new_mileage = int(data['converted_distance'])
-                return db.worker.check_mileage(name, new_mileage, user_id)
+                return check_mileage(name, new_mileage, user_id)
 
     return 'Нет данных по статистике оборудования'
 
