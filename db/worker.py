@@ -1,8 +1,6 @@
-import os
 from main import get_last_activity
 from db.mongo import db_connect
-
-bike = os.getenv('FIRST_USER_BIKE_ID')
+from users import users_data
 
 # Специальный символ для переноса строки внутри f-строк
 nl = '\n'
@@ -17,7 +15,7 @@ def post_to_db(response: list, user_id: int):
 
 def check_mileage(name: str, new_mileage: int, user_id: int):
     coll = db_connect(user_id, param='gear')
-    document = {'bike': bike,
+    document = {'bike': users_data[f'{user_id}']['bike'],
                 'name': name,
                 'mileage': new_mileage}
 
@@ -38,7 +36,9 @@ def check_mileage(name: str, new_mileage: int, user_id: int):
     coll.insert_one(document)
     text = f'Пробег {name} составляет – {new_mileage} км'
     service_text = service(name, new_mileage, user_id)
-    return f'{text}{nl}{nl}{service_text}'
+    if service_text:
+        return f'{text}{nl}{nl}{service_text}'
+    return text
 
 
 def service(name: str, new_mileage: int, user_id: int):
@@ -46,7 +46,7 @@ def service(name: str, new_mileage: int, user_id: int):
     drive_interval = 500
 
     coll = db_connect(user_id, param='service')
-    old_service = coll.find_one({'bike': {'$eq': bike}})
+    old_service = coll.find_one({'bike': {'$eq': users_data[f'{user_id}']['bike']}})
 
     if old_service:
         last_chain_service = old_service['last_chain_service']
@@ -65,7 +65,7 @@ def service(name: str, new_mileage: int, user_id: int):
             return f'Интервал чистки привода превышен на {drive_dif - drive_interval} км, почистить привод!'
 
     else:
-        coll.insert_one({'bike': bike, 'name': name, 'mileage': new_mileage,
+        coll.insert_one({'bike': users_data[f'{user_id}']['bike'], 'name': name, 'mileage': new_mileage,
                          'last_chain_service': new_mileage, 'last_drive_service': new_mileage})
 
 
@@ -81,11 +81,14 @@ def post_to_db_many(list_of_all_training: list, user_id: int) -> str:
 
 
 def get_last_training(user_id: int):
+    response = get_last_activity(user_id)
+
     coll = db_connect(user_id, param='training')
     list_of_date = coll.find().sort("start_date_local", -1).limit(1)
     max_date = list(list_of_date)
-    response = get_last_activity(user_id)
 
-    if response[0]['id'] == max_date[0]['id']:
-        return max_date
+    if max_date:
+        if response[0]['id'] == max_date[0]['id']:
+            return max_date
+        return response
     return response

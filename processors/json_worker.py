@@ -4,6 +4,12 @@ from db.worker import get_last_training
 from processors.gpx_maker import get_initial_data
 from users import users_data
 
+from redis import StrictRedis
+from redis_cache import RedisCache
+
+client = StrictRedis(host="127.0.0.1", decode_responses=True)
+cache = RedisCache(redis_client=client)
+
 # from processors.polyline_file import get_picture
 
 bikes = ['заезд', 'виртуальный заезд', 'ride', 'virtualride']
@@ -77,6 +83,7 @@ def get_energy_spent():
         return check_calories
 
 
+# @cache.cache()
 def generation_analyse(user_id: int):
     global load_data
     load_data = get_last_training(user_id)[0]
