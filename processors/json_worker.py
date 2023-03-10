@@ -1,20 +1,10 @@
-import json
-import os
-
 from datetime import datetime
 from time import strftime, gmtime
+from db.worker import get_last_training
+from processors.gpx_maker import get_initial_data
+from users import users_data
 
-from dotenv import load_dotenv
-
-from connect_mongo_db import get_last_training
-from gpx_maker import get_initial_data
-from main import get_list_of_activities
-
-# from polyline_file import get_picture
-
-load_dotenv()
-
-user_weight = os.getenv('USER_WEIGHT')
+# from processors.polyline_file import get_picture
 
 bikes = ['заезд', 'виртуальный заезд', 'ride', 'virtualride']
 run = ['забег', 'run']
@@ -45,13 +35,13 @@ def get_heartrate():
         return average_heartrate, max_heartrate
 
 
-def get_power():
+def get_power(user_id: int):
     has_powermeter = load_data['device_watts']
     if has_powermeter:
         weighted_average_watts = int(load_data['weighted_average_watts'])
         average_power = int(load_data['average_watts'])
         max_power = int(load_data['max_watts'])
-        relative_power = round(weighted_average_watts / float(user_weight), 1)
+        relative_power = round(weighted_average_watts / float(users_data[f'{user_id}']['weight']), 1)
         return weighted_average_watts, relative_power, average_power, max_power
     else:
         weighted_average_watts = 'Неизвестно'
@@ -88,12 +78,10 @@ def get_energy_spent():
 
 
 def generation_analyse(user_id: int):
-    get_list_of_activities(user_id)
     global load_data
-    load_data = get_last_training(user_id)
-
-    # get_picture(load_data)
+    load_data = get_last_training(user_id)[0]
     get_initial_data(load_data['id'], user_id)
+    # get_picture(load_data)
 
     for i in range(0, len(load_data)):
         type_of_activity = get_type_of_activity()
@@ -112,7 +100,7 @@ def generation_analyse(user_id: int):
         check_calories = get_energy_spent()
 
         if type_of_activity == 'Велосипед':
-            check_power = get_power()
+            check_power = get_power(user_id)
             check_cadence = get_cadence()
             check_ratio = get_ratio(check_power, check_hr)
 

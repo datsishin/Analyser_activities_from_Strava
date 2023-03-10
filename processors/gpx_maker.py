@@ -1,22 +1,13 @@
-import os
 import requests as r
-from dotenv import load_dotenv
-from hr_analyser import get_hr_statistics
+from processors.hr_analyser import get_hr_statistics
+from processors.power_analyser import get_power_statistics
 from main import status_code_checker
-from power_analyser import get_power_statistics
-
-load_dotenv()
+from users import users_data
 
 
 def get_initial_data(id: int, user_id: int):
-    first_user = os.getenv('FIRST_USER_ID')
-    second_user = os.getenv('SECOND_USER_ID')
-
-    users_data = {first_user: {'token': os.getenv('FIRST_ACCESS_TOKEN')},
-                  second_user: {'token': os.getenv('SECOND_ACCESS_TOKEN')}}
-
     url = f'https://www.strava.com/api/v3/activities/{id}/streams'
-    token = users_data[f'{user_id}']['token']
+    token = users_data[f'{user_id}']['access_token']
     headers = {'Authorization': 'Bearer ' + token}
     params = {'access_token': token}
     heartrate = {'keys': 'heartrate'}

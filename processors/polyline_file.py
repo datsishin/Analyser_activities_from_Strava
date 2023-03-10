@@ -1,13 +1,8 @@
 import io
 import statistics
-
 from PIL import Image
 import folium
 import polyline
-
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 def get_picture(load_data: dict):
@@ -45,4 +40,4 @@ def get_picture(load_data: dict):
 
     img_data = m._to_png(1)
     img = Image.open(io.BytesIO(img_data))
-    img.save('media/mappoly.png')
+    img.save('media/map.png')

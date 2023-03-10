@@ -1,21 +1,12 @@
-import os
-from dotenv import load_dotenv
+from processors.graph_creater import make_chart
+from users import users_data
 
-from graph_creater import make_chart
-
-load_dotenv()
 nl = '\n'
-
-first_user = os.getenv('FIRST_USER_ID')
-second_user = os.getenv('SECOND_USER_ID')
 
 
 def get_hr_statistics(hr_data: list, user_id: int):
-    users_data = {first_user: {'hr_max': 202, 'threshold': 185},
-                  second_user: {'hr_max': 220, 'threshold': 175}}
-
-    threshold = users_data[f'{user_id}']['threshold']
-    hr_max = users_data[f'{user_id}']['hr_max']
+    threshold = int(users_data[f'{user_id}']['threshold'])
+    hr_max = int(users_data[f'{user_id}']['hr_max'])
 
     zone_1_by_hr = [0, threshold * 0.68]
     zone_2_by_hr = [threshold * 0.68, threshold * 0.85]

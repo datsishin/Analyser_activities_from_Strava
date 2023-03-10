@@ -2,14 +2,15 @@ import glob
 import logging
 import time
 
+from telebot import types
 from telebot.types import InputMediaPhoto
 import telebot
 import os
 from dotenv import load_dotenv
 
-from json_worker import generation_analyse
-from main import get_mileage_for_service
-from stats_graber import get_volume_stats, get_full_stats
+from processors.json_worker import generation_analyse
+from main import get_mileage
+from processors.stats_graber import get_volume_stats, get_full_stats
 
 load_dotenv()
 
@@ -74,7 +75,7 @@ def get_statistics(message):
 @bot.message_handler(commands=['service'])
 def get_service_info(message):
     user_id = message.chat.id
-    text = get_mileage_for_service(user_id)
+    text = get_mileage(user_id)
     bot.send_message(user_id, text=text)
 
 
@@ -83,6 +84,35 @@ def get_fully_stat(message):
     user_id = message.chat.id
     text = get_full_stats(user_id)
     bot.send_message(user_id, text=text)
+
+
+@bot.message_handler(commands=['menu'])
+def menu(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+
+    item1 = types.KeyboardButton('Последняя тренировка')
+    item2 = types.KeyboardButton('Статистика объема')
+    item3 = types.KeyboardButton('Узнать пробег')
+    item4 = types.KeyboardButton('Загрузить все тренировки')
+
+    markup.add(item1, item2, item3, item4)
+    bot.send_message(message.chat.id, 'Активировано меню обслуживания', reply_markup=markup)
+
+
+@bot.message_handler(content_types=['text'])
+def bot_message(message):
+    if message.chat.type == 'private':
+        if message.text == 'Последняя тренировка':
+            get_training_data(message)
+
+        if message.text == 'Статистика объема':
+            get_statistics(message)
+
+        if message.text == 'Узнать пробег':
+            get_service_info(message)
+
+        if message.text == 'Загрузить все тренировки':
+            get_fully_stat(message)
 
 
 while True:

@@ -1,25 +1,15 @@
-import os
-from datetime import datetime, timedelta
-from dotenv import load_dotenv
-
 import requests as r
-
-from connect_mongo_db import post_to_db_many
+from datetime import datetime, timedelta
+from db.worker import post_to_db_many
+from db.mongo import db_connect
 from main import status_code_checker
-
-load_dotenv()
+from users import users_data
 
 url = 'https://www.strava.com/api/v3/athlete/activities'
 
-first_user = os.getenv('FIRST_USER_ID')
-second_user = os.getenv('SECOND_USER_ID')
-
-users_data = {first_user: {'token': os.getenv('FIRST_ACCESS_TOKEN')},
-              second_user: {'token': os.getenv('SECOND_ACCESS_TOKEN')}}
-
 
 def get_list_of_training(user_id: int) -> list:
-    token = users_data[f'{user_id}']['token']
+    token = users_data[f'{user_id}']['access_token']
     params = {'access_token': token,
               'per_page': 200,
               'page': 1}
@@ -48,7 +38,7 @@ def get_list_of_training(user_id: int) -> list:
 
 
 def get_volume_stats(user_id: int) -> list:
-    data = get_list_of_training(user_id)
+    data = list(db_connect(user_id, param='training').find({}))
 
     today = datetime.now().date()
     week_total_seconds = 0
