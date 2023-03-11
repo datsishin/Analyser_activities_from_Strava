@@ -6,9 +6,6 @@ import requests as r
 from service import check_mileage
 from users import users_data, first_user, second_user
 
-# Специальный символ для переноса строки внутри f-строк
-nl = '\n'
-
 
 def get_fresh_api_token(user_id: int):
     url_refresh_token = 'https://www.strava.com/oauth/token'

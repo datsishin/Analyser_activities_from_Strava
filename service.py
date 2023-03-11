@@ -8,19 +8,22 @@ def check_mileage(name: str, new_mileage: int, user_id: int):
                 'name': name,
                 'mileage': new_mileage}
 
-    old_mileage = coll.find_one({'mileage': {'$exists': True}})
+    record = coll.find_one({'mileage': {'$exists': True}})
 
-    if old_mileage:
-        old_mileage_data = old_mileage['mileage']
-        last_chain_service = old_mileage['last_chain_service']
-        last_drive_service = old_mileage['last_drive_service']
+    if record:
+        old_mileage = record['mileage']
+        last_chain_service = record['last_chain_service']
+        last_drive_service = record['last_drive_service']
 
-        if new_mileage > old_mileage_data:
-            coll.update_one(old_mileage, {'$set': {'mileage': new_mileage}})
-            return service(new_mileage, last_chain_service, last_drive_service)
+        if new_mileage > old_mileage:
+            coll.update_one(record, {'$set': {'mileage': new_mileage}})
+            service_text = service(new_mileage, last_chain_service, last_drive_service)
+            return f'Пробег {name} увеличился на {new_mileage-old_mileage} км{nl}' \
+                   f'Общий пробег составляет – {new_mileage} км{nl}{nl}' \
+                   f'{service_text}'
 
-        if new_mileage == old_mileage_data:
-            text = f'Пробег {name} не изменился и составляет – {old_mileage_data} км'
+        if new_mileage == old_mileage:
+            text = f'Пробег {name} составляет – {old_mileage} км'
             service_text = service(new_mileage, last_chain_service, last_drive_service)
             if service_text:
                 return f'{text}{nl}{nl}{service_text}'

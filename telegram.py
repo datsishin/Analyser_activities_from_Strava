@@ -137,7 +137,7 @@ def bot_message(message):
             service(message, param='drive')
 
         if message.text == 'Последнее обслуживание':
-            pass
+            service(message, param='info')
 
         if message.text == 'Выход':
             chat_id = message.chat.id

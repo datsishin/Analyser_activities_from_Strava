@@ -1,6 +1,6 @@
 from db.mongo import db_connect
 from main import get_mileage
-from users import users_data
+from users import users_data, nl
 
 
 def cleaning(message, param: str):
@@ -20,6 +20,12 @@ def cleaning(message, param: str):
         coll.update_one(bike_service_info, {'$set': {'last_chain_service': bike_service_info['mileage']}})
         return 'Молодец что обслужил цепь, ей приятно 😽'
 
-    elif param == 'drive':
+    if param == 'drive':
         coll.update_one(bike_service_info, {'$set': {'last_drive_service': bike_service_info['mileage']}})
         return 'Молодец что обслужил привод, ему приятно 😽'
+
+    if param == 'info':
+        return f'Последнее обслуживание:{nl}' \
+               f'Смазка цепи – {bike_service_info["last_chain_service"]} км{nl}' \
+               f'Чистка привода – {bike_service_info["last_drive_service"]} км {nl}{nl}' \
+               f'Текущий пробег – {bike_service_info["mileage"]} км'
