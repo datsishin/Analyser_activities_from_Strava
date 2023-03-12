@@ -4,6 +4,7 @@ import matplotlib
 from users import nl
 
 matplotlib.use('agg')
+# matplotlib.use('TkAgg')
 
 
 def make_chart(list_of_zone, dicts_of_zones, option):
@@ -41,3 +42,17 @@ def make_chart(list_of_zone, dicts_of_zones, option):
     fig.set_size_inches(12, 12)
 
     plt.savefig(f'media/graph_by_{option}.png', facecolor='white', edgecolor='black', dpi=100)
+
+
+def make_TSS_graph(list_of_date: list, list_of_TSS: list):
+    x_values = list_of_date
+    y_values = list_of_TSS
+
+    dates = matplotlib.dates.date2num(x_values)
+    plt.plot_date(dates, y_values, color = 'red', markersize = 3)
+
+    plt.savefig('media/graph_by_TSS.png')
+    return 'ok'
+
+# if __name__ == '__main__':
+#     make_TSS_graph()

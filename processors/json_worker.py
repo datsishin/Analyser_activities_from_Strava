@@ -41,11 +41,13 @@ def get_heartrate():
 def get_power(user_id: int):
     has_powermeter = load_data['device_watts']
     if has_powermeter:
+        ftp = int(users_data[f'{user_id}']['ftp'])
         weighted_average_watts = int(load_data['weighted_average_watts'])
         average_power = int(load_data['average_watts'])
         max_power = int(load_data['max_watts'])
         relative_power = round(weighted_average_watts / float(users_data[f'{user_id}']['weight']), 1)
-        return weighted_average_watts, relative_power, average_power, max_power
+        tss = round((weighted_average_watts ** 2 * load_data['moving_time']) / (ftp ** 2 * 3600) * 100, 1)
+        return weighted_average_watts, relative_power, average_power, max_power, tss
     else:
         weighted_average_watts = 'Неизвестно'
         relative_power = 'Неизвестно'
@@ -127,6 +129,7 @@ def generation_analyse(user_id: int):
                 f'💪🏻Усредненная мощность – {check_power[0]}{nl}'
                 f'💪Средняя мощность – {check_power[2]}{nl}'
                 f'🧨‍Макс. мощность – {check_power[3]}{nl}'
+                f'😰TSS – {check_power[4]}{nl}'
                 f'📶Мощность/пульс – {check_ratio}{nl}'
                 f'🏎Средняя скорость – {average_speed}км/ч{nl}'
                 f'🔝Макс. скорость – {max_speed}км/ч{nl}️'

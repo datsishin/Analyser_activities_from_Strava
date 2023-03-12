@@ -11,7 +11,7 @@ import telebot
 from db.service_of_bike import cleaning
 from processors.json_worker import generation_analyse
 from main import get_mileage
-from processors.stats_graber import get_volume_stats, get_full_stats
+from processors.stats_graber import get_stats, get_full_stats, get_TSS_diagram
 from users import nl
 
 load_dotenv()
@@ -45,18 +45,36 @@ def get_training_data(message):
 
 def get_statistics(message):
     user_id = message.chat.id
-    data = get_volume_stats(user_id)
+    data = get_stats(user_id)
+
     if type(data) == list:
         bot.send_message(user_id, text=f'Время тренировок за последние 7 дней:{nl}{data[0]}'
                                        f'{nl}'
                                        f'{nl}'
-                                       f'Время тренировок за последние 30 дней:{nl}{data[1]}'
+                                       f'Время тренировок за последние 31 день:{nl}{data[1]}'
                                        f'{nl}'
                                        f'{nl}'
                                        f'Время тренировок за последние 365 дней:{nl}{data[2]}'
                                        f'{nl}'
                                        f'{nl}'
-                                       f'Время тренировок за все время:{nl}{data[3]}')
+                                       f'Время тренировок за все время:{nl}{data[3]}'
+                                       f'{nl}'
+                                       f'{nl}'
+                                       f'TSS за последние 7 дней (ATL): {data[4]}'
+                                       f'{nl}'
+                                       f'{nl}'
+                                       f'TSS за последние 6 недель (CTL): {data[5]}'
+                                       f'{nl}'
+                                       f'{nl}'
+                                       f'TSB: {data[6]}'
+                         )
+
+    graph = get_TSS_diagram(user_id)
+    if graph == 'ok':
+        bot.send_photo(user_id, photo=open('media/graph_by_TSS.png', 'rb'))
+        files = glob.glob('media/*')
+        for f in files:
+            os.remove(f)
     else:
         bot.send_message(user_id, data)
 
@@ -90,7 +108,7 @@ def main_keyboard():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
     item1 = types.KeyboardButton('Последняя тренировка')
-    item2 = types.KeyboardButton('Статистика объема')
+    item2 = types.KeyboardButton('Статистика')
     item3 = types.KeyboardButton('Загрузить тренировки')
     item4 = types.KeyboardButton('Пробег')
     item5 = types.KeyboardButton('Обслуживание')
@@ -117,7 +135,7 @@ def bot_message(message):
         if message.text == 'Последняя тренировка':
             get_training_data(message)
 
-        if message.text == 'Статистика объема':
+        if message.text == 'Статистика':
             get_statistics(message)
 
         if message.text == 'Пробег':

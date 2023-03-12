@@ -1,3 +1,5 @@
+from copy import copy
+
 import requests as r
 from processors.hr_analyser import get_hr_statistics
 from processors.power_analyser import get_power_statistics
@@ -20,6 +22,7 @@ def get_initial_data(id: int, user_id: int):
         headers['Authorization'] = f'Bearer ' + new_token
 
     response_hr = r.get(url, headers=headers, params=heartrate).json()
+
     response_power = r.get(url, headers=headers, params=power).json()
     processing_data(response_hr, response_power, user_id)
 
@@ -36,3 +39,49 @@ def processing_data(response_hr: list, response_power: list, user_id: int):
             power_data = list(response_power)[i]['data']
             get_power_statistics(power_data, user_id)
             break
+
+    get_power_by_hr(hr_data, power_data)
+
+
+def get_power_by_hr(hr_data: list, power_data: list):
+    hr_list = get_middle_item(hr_data)
+    power_list = get_middle_item(power_data)
+
+    print(hr_list[0])
+    print(hr_list[1])
+    print(power_list[0])
+    print(power_list[1])
+
+
+def get_middle_item(data):
+    middle = float(len(data) / 2)
+
+    if middle % 2 != 0:
+        middle_item = data[int(middle - 0.5)]
+        first_list = []
+        second_list = []
+        for i in range(0, int(middle_item - 0.5)):
+            item = data[i]
+            first_list.append(item)
+        for i in range(int(middle_item + 0.5), len(data)):
+            item = data[i]
+            second_list.append(item)
+
+        final_list = [first_list, second_list]
+        return final_list
+
+    else:
+        first_list = []
+        second_list = []
+        for i in range(0, int(data[int(middle)]) - 1):
+            item = data[i]
+            first_list.append(item)
+        for i in range(data[int(middle)] - 1, len(data)):
+            item = data[i]
+            second_list.append(item)
+
+        final_list = [first_list, second_list]
+        return final_list
+
+# if __name__ == '__main__':
+#     get_power_by_hr()
