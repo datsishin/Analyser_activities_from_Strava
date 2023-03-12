@@ -1,9 +1,6 @@
 from main import get_last_activity
 from db.mongo import db_connect
 
-# Специальный символ для переноса строки внутри f-строк
-nl = '\n'
-
 
 def post_training(response: list, user_id: int):
     coll = db_connect(user_id, param='training')

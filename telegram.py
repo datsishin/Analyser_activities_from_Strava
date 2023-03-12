@@ -12,13 +12,11 @@ from db.service_of_bike import cleaning
 from processors.json_worker import generation_analyse
 from main import get_mileage
 from processors.stats_graber import get_volume_stats, get_full_stats
+from users import nl
 
 load_dotenv()
 
 bot = telebot.TeleBot(os.getenv('TELEGRAM_API_TOKEN'))
-
-# Специальный символ для переноса строки внутри f-строк
-nl = '\n'
 
 
 def get_training_data(message):

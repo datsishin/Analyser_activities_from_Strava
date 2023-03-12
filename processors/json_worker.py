@@ -2,7 +2,7 @@ from datetime import datetime
 from time import strftime, gmtime
 from db.training import get_last_training
 from processors.gpx_maker import get_initial_data
-from users import users_data
+from users import users_data, nl
 
 from redis import StrictRedis
 from redis_cache import RedisCache
@@ -14,9 +14,6 @@ cache = RedisCache(redis_client=client)
 
 bikes = ['заезд', 'виртуальный заезд', 'ride', 'virtualride']
 run = ['забег', 'run']
-
-# Специальный символ для переноса строки внутри f-строк
-nl = '\n'
 
 
 def get_type_of_activity():

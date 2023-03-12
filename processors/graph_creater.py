@@ -1,25 +1,30 @@
 from matplotlib import pyplot as plt
 import matplotlib
 
-matplotlib.use('agg')
+from users import nl
 
-# Специальный символ для переноса строки внутри f-строк
-nl = '\n'
+matplotlib.use('agg')
 
 
 def make_chart(list_of_zone, dicts_of_zones, option):
-    type_of_measurement = {'hr': f'{nl}ЧСС, уд/мин',
-                           'power': f'{nl}Мощность, Вт'}
+    type_of_measurement = {'hr': f'ЧСС, уд/мин',
+                           'power': f'Мощность, Вт'}
+
+    type_of_graph = {'power': 'мощности',
+                     'hr': 'пульса'}
 
     fig, ax = plt.subplots()
 
     zones = list(list_of_zone.values())
     percents = list(dicts_of_zones.values())
-    bar_labels = [f'{percents[0]}%', f'{percents[1]}%', f'{percents[2]}%',
-                  f'{percents[3]}%', f'{percents[4]}%']
-    bar_colors = ['tab:grey', 'tab:blue', 'tab:green', 'tab:orange', 'tab:red']
 
-    font_axes = {'fontsize': 18,
+    bar_labels = [f'{percents[0]}%', f'{percents[1]}%', f'{percents[2]}%',
+                  f'{percents[3]}%', f'{percents[4]}%', f'{percents[5]}%', f'{percents[6]}%']
+
+    bar_colors = ['tab:gray', 'tab:cyan', 'tab:blue', 'tab:green', 'tab:olive', 'tab:orange',
+                  'tab:red']
+
+    font_axes = {'fontsize': 24,
                  'fontstyle': 'normal'}
 
     font_title = {'fontsize': 30,
@@ -31,8 +36,8 @@ def make_chart(list_of_zone, dicts_of_zones, option):
     ax.set_xlabel(type_of_measurement[option], fontdict=font_axes)
     ax.legend(title='Разбивка по зонам')
 
-    plt.title(f'Распределение по зонам{nl}', fontdict=font_title)
+    plt.title(f'Распределение по зонам {type_of_graph[f"{option}"]}{nl}', fontdict=font_title)
 
-    fig.set_size_inches(10, 10)
+    fig.set_size_inches(12, 12)
 
-    plt.savefig(f'media/graph_by_{option}.png', facecolor='white', edgecolor='black', dpi=500)
+    plt.savefig(f'media/graph_by_{option}.png', facecolor='white', edgecolor='black', dpi=100)
