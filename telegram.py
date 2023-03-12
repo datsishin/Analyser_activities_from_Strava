@@ -46,16 +46,19 @@ def get_training_data(message):
 def get_statistics(message):
     user_id = message.chat.id
     data = get_volume_stats(user_id)
-    bot.send_message(user_id, text=f'Время тренировок за последние 7 дней:{nl}{data[0]}'
-                                   f'{nl}'
-                                   f'{nl}'
-                                   f'Время тренировок за последние 30 дней:{nl}{data[1]}'
-                                   f'{nl}'
-                                   f'{nl}'
-                                   f'Время тренировок за последние 365 дней:{nl}{data[2]}'
-                                   f'{nl}'
-                                   f'{nl}'
-                                   f'Время тренировок за все время:{nl}{data[3]}')
+    if type(data) == list:
+        bot.send_message(user_id, text=f'Время тренировок за последние 7 дней:{nl}{data[0]}'
+                                       f'{nl}'
+                                       f'{nl}'
+                                       f'Время тренировок за последние 30 дней:{nl}{data[1]}'
+                                       f'{nl}'
+                                       f'{nl}'
+                                       f'Время тренировок за последние 365 дней:{nl}{data[2]}'
+                                       f'{nl}'
+                                       f'{nl}'
+                                       f'Время тренировок за все время:{nl}{data[3]}')
+    else:
+        bot.send_message(user_id, data)
 
 
 def get_service_info(message):

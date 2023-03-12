@@ -17,7 +17,9 @@ def post_many_training(list_of_all_training: list, user_id: int) -> str:
         if coll.find_one(filter={'id': document['id']}) is None:
             coll.insert_one(document)
 
-    return f'Тренировок успешно загружено – {count}'
+    count_name = correct_count_name(count)
+
+    return f'{count} {count_name}'
 
 
 def get_last_training(user_id: int):
@@ -32,3 +34,13 @@ def get_last_training(user_id: int):
             return max_date
         return response
     return response
+
+
+def correct_count_name(count: int) -> str:
+
+    if (count % 100) % 10 == 1 or count % 10 > 4 or count % 10 == 0:
+        return 'тренировок успешно загружено'
+    elif count % 10 == 1:
+        return 'тренировка успешно загружена'
+    else:
+        return 'тренировки успешно загружены'

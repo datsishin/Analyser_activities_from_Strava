@@ -24,8 +24,12 @@ def cleaning(message, param: str):
         coll.update_one(bike_service_info, {'$set': {'last_drive_service': bike_service_info['mileage']}})
         return 'Молодец что обслужил привод, ему приятно 😽'
 
-    if param == 'info':
+    if param == 'info' and coll.find_one({'bike': {'$eq': bike},
+                                          'last_chain_service': {'$exists': True},
+                                          'last_drive_service': {'$exists': True}}):
         return f'Последнее обслуживание:{nl}' \
                f'Смазка цепи – {bike_service_info["last_chain_service"]} км{nl}' \
                f'Чистка привода – {bike_service_info["last_drive_service"]} км {nl}{nl}' \
                f'Текущий пробег – {bike_service_info["mileage"]} км'
+
+    return 'Нет данных по последнему обслуживанию'

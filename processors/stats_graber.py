@@ -40,6 +40,9 @@ def get_list_of_training(user_id: int) -> list:
 def get_volume_stats(user_id: int) -> list:
     data = list(db_connect(user_id, param='training').find({}))
 
+    if not data:
+        return 'Данных нет, загрузите все тренировки'
+
     today = datetime.now().date()
     week_total_seconds = 0
     month_total_seconds = 0
