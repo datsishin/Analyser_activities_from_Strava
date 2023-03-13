@@ -24,7 +24,7 @@ def get_initial_data(id: int, user_id: int):
     response_hr = r.get(url, headers=headers, params=heartrate).json()
 
     response_power = r.get(url, headers=headers, params=power).json()
-    processing_data(response_hr, response_power, user_id)
+    return processing_data(response_hr, response_power, user_id)
 
 
 def processing_data(response_hr: list, response_power: list, user_id: int):
@@ -40,17 +40,18 @@ def processing_data(response_hr: list, response_power: list, user_id: int):
             get_power_statistics(power_data, user_id)
             break
 
-    get_power_by_hr(hr_data, power_data)
+    return get_power_by_hr(hr_data, power_data)
 
 
 def get_power_by_hr(hr_data: list, power_data: list):
     hr_list = get_middle_item(hr_data)
     power_list = get_middle_item(power_data)
 
-    print(hr_list[0])
-    print(hr_list[1])
-    print(power_list[0])
-    print(power_list[1])
+    first_half = sum(power_list[0]) / sum(hr_list[0])
+    second_half = sum(power_list[1]) / sum(hr_list[1])
+
+    index = (first_half - second_half) / first_half * 100
+    return index
 
 
 def get_middle_item(data):

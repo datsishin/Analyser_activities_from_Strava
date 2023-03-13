@@ -86,7 +86,7 @@ def get_energy_spent():
 def generation_analyse(user_id: int):
     global load_data
     load_data = get_last_training(user_id)[0]
-    get_initial_data(load_data['id'], user_id)
+    index = round(get_initial_data(load_data['id'], user_id), 2)
     # get_picture(load_data)
 
     for i in range(0, len(load_data)):
@@ -125,11 +125,12 @@ def generation_analyse(user_id: int):
 
                 f'🫀Средний пульс – {check_hr[0]}{nl}'
                 f'❤️‍Максимальный пульс – {check_hr[1]}{nl}'
-                f'⚖️Удельная мощность – {check_power[1]}{nl}'
+                f'🐎️Удельная мощность – {check_power[1]}{nl}'
                 f'💪🏻Усредненная мощность – {check_power[0]}{nl}'
                 f'💪Средняя мощность – {check_power[2]}{nl}'
                 f'🧨‍Макс. мощность – {check_power[3]}{nl}'
                 f'😰TSS – {check_power[4]}{nl}'
+                f'⚖️Мощность/пульс разница – {index}{nl}'
                 f'📶Мощность/пульс – {check_ratio}{nl}'
                 f'🏎Средняя скорость – {average_speed}км/ч{nl}'
                 f'🔝Макс. скорость – {max_speed}км/ч{nl}️'
