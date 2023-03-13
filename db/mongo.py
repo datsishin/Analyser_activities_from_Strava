@@ -5,7 +5,8 @@ from users import users_data
 
 
 def db_connect(user_id: int, param=str):
-    client = MongoClient("mongodb://mongo_db/")
+    # client = MongoClient("mongodb://localhost:27017/")
+    client = MongoClient("mongodb://mongo_db:27017/")
     athlete_id = users_data[f'{user_id}']['athlete_id']
 
     if param == 'training':

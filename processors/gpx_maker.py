@@ -22,28 +22,44 @@ def get_initial_data(id: int, user_id: int):
         headers['Authorization'] = f'Bearer ' + new_token
 
     response_hr = r.get(url, headers=headers, params=heartrate).json()
-
     response_power = r.get(url, headers=headers, params=power).json()
     return processing_data(response_hr, response_power, user_id)
 
 
 def processing_data(response_hr: list, response_power: list, user_id: int):
+    global hr_data, power_data
+
     for i in range(0, len(response_hr)):
         if response_hr[i]['type'] == 'heartrate':
             hr_data = list(response_hr)[i]['data']
-            get_hr_statistics(hr_data, user_id)
+            # get_hr_statistics(hr_data, user_id)
             break
+        hr_data = []
 
     for i in range(0, len(response_power)):
         if response_power[i]['type'] == 'watts':
             power_data = list(response_power)[i]['data']
-            get_power_statistics(power_data, user_id)
+            # get_power_statistics(power_data, user_id)
             break
+        power_data = []
 
-    return get_power_by_hr(hr_data, power_data)
+    return data_checker(user_id)
 
 
-def get_power_by_hr(hr_data: list, power_data: list):
+def data_checker(user_id: int):
+    if hr_data and power_data:
+        get_hr_statistics(hr_data, user_id)
+        get_power_statistics(power_data, user_id)
+        return get_power_by_hr()
+    if power_data:
+        get_power_statistics(power_data, user_id)
+    if hr_data:
+        get_hr_statistics(hr_data, user_id)
+    else:
+        pass
+
+
+def get_power_by_hr():
     hr_list = get_middle_item(hr_data)
     power_list = get_middle_item(power_data)
 

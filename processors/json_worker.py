@@ -4,12 +4,6 @@ from db.training import get_last_training
 from processors.gpx_maker import get_initial_data
 from users import users_data, nl
 
-from redis import StrictRedis
-from redis_cache import RedisCache
-
-client = StrictRedis(host="127.0.0.1", decode_responses=True)
-cache = RedisCache(redis_client=client)
-
 # from processors.polyline_file import get_picture
 
 bikes = ['заезд', 'виртуальный заезд', 'ride', 'virtualride']
@@ -82,11 +76,18 @@ def get_energy_spent():
         return check_calories
 
 
-# @cache.cache()
+def get_index(user_id: int):
+    index = get_initial_data(load_data['id'], user_id)
+    if index:
+        return round(index, 2)
+    else:
+        index = 'Неизвестно'
+        return index
+
+
 def generation_analyse(user_id: int):
     global load_data
     load_data = get_last_training(user_id)[0]
-    index = round(get_initial_data(load_data['id'], user_id), 2)
     # get_picture(load_data)
 
     for i in range(0, len(load_data)):
@@ -104,6 +105,7 @@ def generation_analyse(user_id: int):
         elev_low = int(load_data['elev_low'])
         check_hr = get_heartrate()
         check_calories = get_energy_spent()
+        check_index = get_index(user_id)
 
         if type_of_activity == 'Велосипед':
             check_power = get_power(user_id)
@@ -130,7 +132,7 @@ def generation_analyse(user_id: int):
                 f'💪Средняя мощность – {check_power[2]}{nl}'
                 f'🧨‍Макс. мощность – {check_power[3]}{nl}'
                 f'😰TSS – {check_power[4]}{nl}'
-                f'⚖️Мощность/пульс разница – {index}{nl}'
+                f'⚖️Мощность/пульс разница – {check_index}{nl}'
                 f'📶Мощность/пульс – {check_ratio}{nl}'
                 f'🏎Средняя скорость – {average_speed}км/ч{nl}'
                 f'🔝Макс. скорость – {max_speed}км/ч{nl}️'
