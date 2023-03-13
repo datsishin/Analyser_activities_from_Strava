@@ -32,14 +32,12 @@ def processing_data(response_hr: list, response_power: list, user_id: int):
     for i in range(0, len(response_hr)):
         if response_hr[i]['type'] == 'heartrate':
             hr_data = list(response_hr)[i]['data']
-            # get_hr_statistics(hr_data, user_id)
             break
         hr_data = []
 
     for i in range(0, len(response_power)):
         if response_power[i]['type'] == 'watts':
             power_data = list(response_power)[i]['data']
-            # get_power_statistics(power_data, user_id)
             break
         power_data = []
 

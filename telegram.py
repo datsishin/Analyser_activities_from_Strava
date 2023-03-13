@@ -66,17 +66,15 @@ def get_statistics(message):
                                        f'TSS за последние 6 недель (CTL): {data[5]}'
                                        f'{nl}'
                                        f'{nl}'
-                                       f'TSB: {data[6]}'
-                         )
+                                       f'TSB: {data[6]}')
 
     graph = get_TSS_diagram(user_id)
     if graph == 'ok':
         bot.send_photo(user_id, photo=open('media/graph_by_TSS.png', 'rb'))
+
         files = glob.glob('media/*')
         for f in files:
             os.remove(f)
-    else:
-        bot.send_message(user_id, data)
 
 
 def get_service_info(message):

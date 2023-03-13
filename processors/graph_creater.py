@@ -77,11 +77,4 @@ def make_ATL_graph(list_of_date: list, list_of_TSS: list):
 
     list_ATL.reverse()
 
-    # print(list_of_date)
-    # print(list_of_TSS)
-    # print(list_ATL)
-
     return list_ATL
-
-# if __name__ == '__main__':
-#     make_TSS_graph()

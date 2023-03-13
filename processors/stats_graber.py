@@ -97,14 +97,21 @@ def get_stats(user_id: int):
     year_total_time = str(timedelta(seconds=year_total_seconds))
     total_seconds_time = str(timedelta(seconds=total_seconds))
 
-    avg_week_TSS = round(week_TSS / 7, 0)
-    avg_six_weeks_TSS = round(six_weeks_TSS / 42, 0)
-    TBS = avg_six_weeks_TSS - avg_week_TSS
+    avg_week_TSS = round(week_TSS / 7, 2)
+    avg_six_weeks_TSS = round(six_weeks_TSS / 42, 2)
+    TBS = round(six_weeks_TSS / 42 - week_TSS / 7, 2)
 
-    response_list = [week_total_time, month_total_time, year_total_time,
-                     total_seconds_time, avg_week_TSS, avg_six_weeks_TSS, TBS]
+    basic_list = [week_total_time, month_total_time, year_total_time, total_seconds_time]
 
-    return response_list
+    addons_list = [avg_week_TSS, avg_six_weeks_TSS, TBS]
+
+    if addons_list[0] and addons_list[1] and addons_list[2]:
+        basic_list.extend(addons_list)
+        return basic_list
+    else:
+        for i in range(0, 3):
+            basic_list.append('Неизвестно')
+        return basic_list
 
 
 def get_full_stats(user_id: int) -> str:
@@ -144,7 +151,11 @@ def get_TSS_diagram(user_id: int):
             pass
         pass
 
-    return make_TSS_graph(list_of_date, list_of_TSS)
+    if list_of_TSS:
+        return make_TSS_graph(list_of_date, list_of_TSS)
+
+    else:
+        return 'not ok'
 
 # if __name__ == '__main__':
 #     get_TSS_diagram(666785382)
