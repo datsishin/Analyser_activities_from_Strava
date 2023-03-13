@@ -1,0 +1,30 @@
+#DATABASE
+services:
+  mongo_db:
+    image: mongo:latest
+    container_name: 'mongo_db'
+    restart: always
+    ports:
+      - '27017:27017'
+    networks:
+      - custom
+
+  #APP
+  app:
+    container_name: 'strava'
+    image: strava
+    environment:
+      - MONGO_URI=mongodb://mongo_db/
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - custom
+    depends_on:
+      - mongo_db
+    env_file:
+      - .env
+
+networks:
+  custom:
+    driver: bridge
