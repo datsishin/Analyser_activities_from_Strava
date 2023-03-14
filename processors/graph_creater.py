@@ -62,7 +62,7 @@ def make_TSS_graph(list_of_date: list, list_of_TSS: list):
 
     plt.title(f'График TSS за все тренировки{nl}', fontdict=font_title)
 
-    fig.set_size_inches(10, 10)
+    fig.set_size_inches(12, 12)
     plt.savefig('media/graph_by_TSS.png', dpi=100)
     return 'ok'
 

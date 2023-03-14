@@ -40,9 +40,12 @@ def get_list_of_training(user_id: int) -> list:
 
 def get_stats(user_id: int):
     data = list(db_connect(user_id, param='training').find({}))
+    count_of_record_db = len(data)
+    all_training_count = len(get_list_of_training(user_id))
 
-    if not data:
-        return 'Данных нет, загрузите все тренировки'
+    if count_of_record_db == 0 or count_of_record_db < all_training_count:
+        get_full_stats(user_id)
+        data = list(db_connect(user_id, param='training').find({}))
 
     today = datetime.now().date()
     week_total_seconds = 0
@@ -119,6 +122,10 @@ def get_full_stats(user_id: int) -> str:
     return post_many_training(list_of_all_training, user_id)
 
 
+def delete_all(user_id: int):
+    db_connect(user_id, param='delete_all')
+
+
 def type_of_activity_checker(data: dict):
     if 'weighted_average_watts' in data:
         return data['weighted_average_watts']
@@ -156,6 +163,3 @@ def get_TSS_diagram(user_id: int):
 
     else:
         return 'not ok'
-
-# if __name__ == '__main__':
-#     get_TSS_diagram(666785382)

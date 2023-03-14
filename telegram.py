@@ -11,7 +11,7 @@ import telebot
 from db.service_of_bike import cleaning
 from processors.json_worker import generation_analyse
 from main import get_mileage
-from processors.stats_graber import get_stats, get_full_stats, get_TSS_diagram
+from processors.stats_graber import get_stats, get_full_stats, get_TSS_diagram, delete_all
 from users import nl
 
 load_dotenv()
@@ -46,6 +46,7 @@ def get_training_data(message):
 def get_statistics(message):
     user_id = message.chat.id
     data = get_stats(user_id)
+    graph = get_TSS_diagram(user_id)
 
     if type(data) == list:
         bot.send_message(user_id, text=f'Время тренировок за последние 7 дней:{nl}{data[0]}'
@@ -68,7 +69,9 @@ def get_statistics(message):
                                        f'{nl}'
                                        f'TSB: {data[6]}')
 
-    graph = get_TSS_diagram(user_id)
+    if type(data) == str:
+        bot.send_message(user_id, text=data)
+
     if graph == 'ok':
         bot.send_photo(user_id, photo=open('media/graph_by_TSS.png', 'rb'))
 
@@ -83,10 +86,16 @@ def get_service_info(message):
     bot.send_message(user_id, text=text)
 
 
-def get_fully_stat(message):
+def get_fully_stat(message, param: str = None):
     user_id = message.chat.id
-    text = get_full_stats(user_id)
-    bot.send_message(user_id, text=text)
+
+    if param:
+        delete_all(user_id)
+        bot.send_message(user_id, text='Данные удалены')
+
+    else:
+        text = get_full_stats(user_id)
+        bot.send_message(user_id, text=text)
 
 
 def service(message, param: str):
@@ -110,8 +119,9 @@ def main_keyboard():
     item3 = types.KeyboardButton('Загрузить тренировки')
     item4 = types.KeyboardButton('Пробег')
     item5 = types.KeyboardButton('Обслуживание')
+    item6 = types.KeyboardButton('Удалить данные')
 
-    markup.add(item1, item2, item3, item4, item5)
+    markup.add(item1, item2, item3, item4, item5, item6)
     return markup
 
 
@@ -124,6 +134,16 @@ def service_keyboard():
     item4 = types.KeyboardButton('Выход')
 
     markup.add(item1, item2, item3, item4)
+    return markup
+
+
+def confirmation_keyboard():
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+
+    item1 = types.KeyboardButton('Да')
+    item2 = types.KeyboardButton('Нет')
+
+    markup.add(item1, item2)
     return markup
 
 
@@ -156,8 +176,19 @@ def bot_message(message):
         if message.text == 'Последнее обслуживание':
             service(message, param='info')
 
-        if message.text == 'Выход':
+        if message.text in ('Выход', 'Нет'):
             chat_id = message.chat.id
+            text = f'Выбери интересующий пункт меню ⬇'
+            bot.send_message(chat_id, text, reply_markup=main_keyboard())
+
+        if message.text == 'Удалить данные':
+            chat_id = message.chat.id
+            text = f'Уверен?'
+            bot.send_message(chat_id, text, reply_markup=confirmation_keyboard())
+
+        if message.text == 'Да':
+            chat_id = message.chat.id
+            get_fully_stat(message, param='delete')
             text = f'Выбери интересующий пункт меню ⬇'
             bot.send_message(chat_id, text, reply_markup=main_keyboard())
 

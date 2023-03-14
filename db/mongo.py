@@ -22,3 +22,12 @@ def db_connect(user_id: int, param=str):
         collection.create_index([('mileage', pymongo.DESCENDING)])
         collection.create_index([('bike', pymongo.DESCENDING)])
         return collection
+
+    if param == 'delete_all':
+        db = client['training_db']
+        collection = db[f'{athlete_id}_training']
+        collection.drop()
+
+        db = client['service_db']
+        collection = db[f'{athlete_id}_service']
+        collection.drop()

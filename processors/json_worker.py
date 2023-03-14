@@ -3,8 +3,8 @@ from time import strftime, gmtime
 from db.training import get_last_training
 from processors.gpx_maker import get_initial_data
 from users import users_data, nl
-
 # from processors.polyline_file import get_picture
+
 
 bikes = ['заезд', 'виртуальный заезд', 'ride', 'virtualride']
 run = ['забег', 'run']
@@ -85,6 +85,16 @@ def get_index(user_id: int):
         return index
 
 
+def get_temperature():
+    if 'average_temp' in load_data:
+        temperature = int(load_data['average_temp'])
+
+        return f'{temperature}°C'
+    else:
+        temperature = 'Неизвестно'
+        return temperature
+
+
 def generation_analyse(user_id: int):
     global load_data
     load_data = get_last_training(user_id)[0]
@@ -106,6 +116,7 @@ def generation_analyse(user_id: int):
         check_hr = get_heartrate()
         check_calories = get_energy_spent()
         check_index = get_index(user_id)
+        check_temperature = get_temperature()
 
         if type_of_activity == 'Велосипед':
             check_power = get_power(user_id)
@@ -122,6 +133,7 @@ def generation_analyse(user_id: int):
                 f'⬇️Минимальная высота – {elev_low}м{nl}'
                 f'🎖️Количество наград – {achievement_count}{nl}'
                 f'👯Количество других атлетов – {athlete_count}{nl}'
+                f'🌡️Средняя температура – {check_temperature}{nl}'
                 f'🧁Потрачено калорий – {check_calories}{nl}'
                 f'{nl}'
 
@@ -132,7 +144,7 @@ def generation_analyse(user_id: int):
                 f'💪Средняя мощность – {check_power[2]}{nl}'
                 f'🧨‍Макс. мощность – {check_power[3]}{nl}'
                 f'😰TSS – {check_power[4]}{nl}'
-                f'⚖️Мощность/пульс разница – {check_index}{nl}'
+                f'⚖️Разница мощность/пульс – {check_index}{nl}'
                 f'📶Мощность/пульс – {check_ratio}{nl}'
                 f'🏎Средняя скорость – {average_speed}км/ч{nl}'
                 f'🔝Макс. скорость – {max_speed}км/ч{nl}️'
