@@ -53,7 +53,7 @@ def get_last_activity(user_id: int):
     url = 'https://www.strava.com/api/v3/athlete/activities'
     token = users_data[f'{user_id}']['access_token']
     params = {'access_token': token,
-              'per_page': 1,
+              'per_page': 200,
               'page': 1}
 
     response = status_code_checker(url, params, user_id)

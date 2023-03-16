@@ -3,6 +3,7 @@ from time import strftime, gmtime
 from db.training import get_last_training
 from processors.gpx_maker import get_initial_data
 from users import users_data, nl
+
 # from processors.polyline_file import get_picture
 
 
@@ -39,14 +40,12 @@ def get_power(user_id: int):
         weighted_average_watts = int(load_data['weighted_average_watts'])
         average_power = int(load_data['average_watts'])
         max_power = int(load_data['max_watts'])
-        relative_power = round(weighted_average_watts / float(users_data[f'{user_id}']['weight']), 1)
+        user_weight = float(users_data[f'{user_id}']['weight'])
+        relative_power = round(weighted_average_watts / user_weight, 2)
         tss = round((weighted_average_watts ** 2 * load_data['moving_time']) / (ftp ** 2 * 3600) * 100, 1)
         return weighted_average_watts, relative_power, average_power, max_power, tss
     else:
-        weighted_average_watts = 'Неизвестно'
-        relative_power = 'Неизвестно'
-        average_power = 'Неизвестно'
-        max_power = 'Неизвестно'
+        weighted_average_watts = relative_power = average_power = max_power = 'Неизвестно'
         return weighted_average_watts, relative_power, average_power, max_power
 
 
@@ -79,7 +78,7 @@ def get_energy_spent():
 def get_index(user_id: int):
     index = get_initial_data(load_data['id'], user_id)
     if index:
-        return round(index, 2)
+        return f'{round(index, 2)}%'
     else:
         index = 'Неизвестно'
         return index
@@ -139,16 +138,18 @@ def generation_analyse(user_id: int):
 
                 f'🫀Средний пульс – {check_hr[0]}{nl}'
                 f'❤️‍Максимальный пульс – {check_hr[1]}{nl}'
-                f'🐎️Удельная мощность – {check_power[1]}{nl}'
-                f'💪🏻Усредненная мощность – {check_power[0]}{nl}'
                 f'💪Средняя мощность – {check_power[2]}{nl}'
                 f'🧨‍Макс. мощность – {check_power[3]}{nl}'
-                f'😰TSS – {check_power[4]}{nl}'
-                f'⚖️Разница мощность/пульс – {check_index}{nl}'
-                f'📶Мощность/пульс – {check_ratio}{nl}'
-                f'🏎Средняя скорость – {average_speed}км/ч{nl}'
-                f'🔝Макс. скорость – {max_speed}км/ч{nl}️'
+                f'🏎Средняя скорость – {average_speed}{nl}'
+                f'🔝Макс. скорость – {max_speed}{nl}️'
                 f'🔄Средний каденс – {check_cadence}{nl}'
+                f'{nl}'
+
+                f'⚖️Удельная мощность – {check_power[1]}{nl}'
+                f'💪🏻Усредненная мощность – {check_power[0]}{nl}'
+                f'😰TSS – {check_power[4]}{nl}'
+                f'📉Изменение мощность/пульс – {check_index}{nl}'
+                f'📶Мощность/пульс – {check_ratio}{nl}'
             ]
 
             return item_of_bike
