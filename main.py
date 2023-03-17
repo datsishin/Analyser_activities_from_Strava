@@ -81,6 +81,7 @@ def status_code_checker(url, params, user_id):
 
         elif status == 403:
             print('VPN isn\'t connect')
+            break
 
         elif status == 404:
             print('Not found')
