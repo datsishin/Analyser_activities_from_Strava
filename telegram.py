@@ -193,15 +193,17 @@ def bot_message(message):
             bot.send_message(chat_id, text, reply_markup=main_keyboard())
 
 
-while True:
-    try:
-        logging.info("Bot running")
-        bot.polling(none_stop=True, timeout=10)
-        break
-    except telebot.apihelper.ApiException as ex:
-        logging.error(ex)
-        bot.stop_polling()
+bot.infinity_polling(none_stop=True)
 
-        time.sleep(1)
-
-        logging.info("Running again!")
+# while True:
+#     try:
+#         logging.info("Bot running")
+#         bot.polling(none_stop=True, timeout=10)
+#         break
+#     except telebot.apihelper.ApiException as ex:
+#         logging.error(ex)
+#         bot.stop_polling()
+#
+#         time.sleep(1)
+#
+#         logging.info("Running again!")
