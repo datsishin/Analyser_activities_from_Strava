@@ -37,10 +37,9 @@ def get_last_training(user_id: int):
 
 
 def correct_count_name(count: int) -> str:
-
-    if (count % 100) % 10 == 1 or count % 10 > 4 or count % 10 == 0:
+    if count % 10 in (0, 5, 6, 7, 8, 9):
         return 'тренировок успешно загружено'
-    elif count % 10 == 1:
-        return 'тренировка успешно загружена'
-    else:
+    elif count % 10 in (2, 3, 4):
         return 'тренировки успешно загружены'
+    else:
+        return 'тренировка успешно загружена'

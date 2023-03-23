@@ -1,7 +1,6 @@
-from functools import partial
-from operator import is_not
 from statistics import mean
 
+import numpy as np
 import requests as r
 from matplotlib import pyplot as plt
 from scipy.signal import savgol_filter
@@ -36,15 +35,17 @@ def processing_data(response_hr: list, response_power: list, user_id: int):
 
     for i in range(0, len(response_hr)):
         if response_hr[i]['type'] == 'heartrate':
-            data = list(response_hr)[i]['data']
-            hr_data = [i for i in data if i is not None and i != 0]
+            data = response_hr[i]['data']
+            data_without_zero_and_none = [i for i in data if i is not None and i != 0]
+            hr_data = np.asarray(data_without_zero_and_none)
             break
         hr_data = []
 
     for i in range(0, len(response_power)):
         if response_power[i]['type'] == 'watts':
-            data = list(response_power)[i]['data']
-            power_data = [i for i in data if i is not None and i != 0]
+            data = response_power[i]['data']
+            data_without_zero_and_none = [i for i in data if i is not None and i != 0]
+            power_data = np.asarray(data_without_zero_and_none)
             break
         power_data = []
 
@@ -68,13 +69,13 @@ def make_power_by_hr_graph():
 
 
 def data_checker(user_id: int):
-    if hr_data and power_data:
+    if hr_data.size and power_data.size > 0:
         get_hr_statistics(hr_data, user_id)
         get_power_statistics(power_data, user_id)
         return get_power_by_hr()
-    if power_data:
+    if power_data.size > 0:
         get_power_statistics(power_data, user_id)
-    if hr_data:
+    if hr_data.size > 0:
         get_hr_statistics(hr_data, user_id)
 
 

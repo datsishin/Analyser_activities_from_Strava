@@ -160,6 +160,3 @@ def get_TSS_diagram(user_id: int):
 
     if list_of_TSS:
         return make_TSS_graph(list_of_date, list_of_TSS)
-
-    else:
-        return 'not ok'

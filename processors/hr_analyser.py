@@ -35,7 +35,7 @@ def get_hr_statistics(hr_data: list, user_id: int):
 
     all_hr_items = 0
 
-    seconds = len(hr_data)
+    seconds = hr_data.size
     for _ in range(0, seconds):
         hr = hr_data[_]
         if hr:

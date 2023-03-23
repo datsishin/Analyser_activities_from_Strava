@@ -1,6 +1,4 @@
 import glob
-import logging
-import time
 import os
 
 from dotenv import load_dotenv
@@ -194,16 +192,3 @@ def bot_message(message):
 
 
 bot.infinity_polling(none_stop=True)
-
-# while True:
-#     try:
-#         logging.info("Bot running")
-#         bot.polling(none_stop=True, timeout=10)
-#         break
-#     except telebot.apihelper.ApiException as ex:
-#         logging.error(ex)
-#         bot.stop_polling()
-#
-#         time.sleep(1)
-#
-#         logging.info("Running again!")

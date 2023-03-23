@@ -34,7 +34,7 @@ def get_power_statistics(power_data: list, user_id: int):
 
     all_power_items = 0
 
-    seconds = len(power_data)
+    seconds = power_data.size
     for _ in range(0, seconds):
         power = power_data[_]
         if power != 0:
