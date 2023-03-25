@@ -17,8 +17,8 @@ load_dotenv()
 bot = telebot.TeleBot(os.getenv('TELEGRAM_API_TOKEN'))
 
 
-def get_training_data(message):
-    user_id = message.chat.id
+def get_training_data(user_id: int):
+    # user_id = message.chat.id
     text = generation_analyse(user_id)
     bot.send_message(user_id, text=text)
 
@@ -149,7 +149,8 @@ def confirmation_keyboard():
 def bot_message(message):
     if message.chat.type == 'private':
         if message.text == 'Последняя тренировка':
-            get_training_data(message)
+            user_id = message.chat.id
+            get_training_data(user_id)
 
         if message.text == 'Статистика':
             get_statistics(message)
@@ -191,4 +192,4 @@ def bot_message(message):
             bot.send_message(chat_id, text, reply_markup=main_keyboard())
 
 
-bot.infinity_polling(none_stop=True)
+# bot.infinity_polling(none_stop=True)
