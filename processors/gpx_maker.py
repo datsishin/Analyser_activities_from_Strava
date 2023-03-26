@@ -39,7 +39,7 @@ def processing_data(response_hr: list, response_power: list, user_id: int):
             data_without_zero_and_none = [i for i in data if i is not None and i != 0]
             hr_data = np.asarray(data_without_zero_and_none)
             break
-        hr_data = []
+        hr_data = np.asarray([])
 
     for i in range(0, len(response_power)):
         if response_power[i]['type'] == 'watts':
@@ -47,7 +47,7 @@ def processing_data(response_hr: list, response_power: list, user_id: int):
             data_without_zero_and_none = [i for i in data if i is not None and i != 0]
             power_data = np.asarray(data_without_zero_and_none)
             break
-        power_data = []
+        power_data = np.asarray([])
 
     # make_power_by_hr_graph()
     return data_checker(user_id)
@@ -69,7 +69,7 @@ def make_power_by_hr_graph():
 
 
 def data_checker(user_id: int):
-    if hr_data.size and power_data.size > 0:
+    if hr_data.size > 0 and power_data.size > 0:
         get_hr_statistics(hr_data, user_id)
         get_power_statistics(power_data, user_id)
         return get_power_by_hr()
