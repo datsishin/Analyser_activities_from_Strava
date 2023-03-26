@@ -6,12 +6,12 @@ def get_power_statistics(power_data: list, user_id: int):
     ftp = int(users_data[f'{user_id}']['ftp'])
 
     zone_1_by_power = [0, ftp * 0.56]
-    zone_2_by_power = [ftp * 0.57, ftp * 0.75]
-    zone_3_by_power = [ftp * 0.76, ftp * 0.9]
-    zone_4_by_power = [ftp * 0.91, ftp * 1.05]
-    zone_5_by_power = [ftp * 1.06, ftp * 1.2]
-    zone_6_by_power = [ftp * 1.21, ftp * 1.5]
-    zone_7_by_power = [ftp * 1.51, 5000]
+    zone_2_by_power = [ftp * 0.56, ftp * 0.75]
+    zone_3_by_power = [ftp * 0.75, ftp * 0.90]
+    zone_4_by_power = [ftp * 0.90, ftp * 1.05]
+    zone_5_by_power = [ftp * 1.05, ftp * 1.20]
+    zone_6_by_power = [ftp * 1.21, ftp * 1.50]
+    zone_7_by_power = [ftp * 1.50, 5000]
 
     list_of_zone = {
         'zone_1_by_power': f'Восстановление {nl}{int(zone_1_by_power[0])} – {int(zone_1_by_power[1])}',

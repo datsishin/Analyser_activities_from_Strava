@@ -6,13 +6,13 @@ def get_hr_statistics(hr_data: list, user_id: int):
     threshold = int(users_data[f'{user_id}']['threshold'])
     hr_max = int(users_data[f'{user_id}']['hr_max'])
 
-    zone_1_by_hr = [0, threshold * 0.82]
-    zone_2_by_hr = [threshold * 0.83, threshold * 0.89]
-    zone_3_by_hr = [threshold * 0.9, threshold * 0.93]
-    zone_4_by_hr = [threshold * 0.94, threshold * 0.99]
-    zone_5_by_hr = [threshold * 1, threshold * 1.02]
-    zone_6_by_hr = [threshold * 1.03, threshold * 1.05]
-    zone_7_by_hr = [threshold * 1.06, hr_max]
+    zone_1_by_hr = [threshold * 0.65, threshold * 0.81]
+    zone_2_by_hr = [threshold * 0.81, threshold * 0.88]
+    zone_3_by_hr = [threshold * 0.88, threshold * 0.93]
+    zone_4_by_hr = [threshold * 0.93, threshold * 1.00]
+    zone_5_by_hr = [threshold * 1.00, threshold * 1.02]
+    zone_6_by_hr = [threshold * 1.02, threshold * 1.05]
+    zone_7_by_hr = [threshold * 1.05, hr_max]
 
     list_of_zone = {
         'zone_1_by_hr': f'Восстановление {nl}{int(zone_1_by_hr[0])} – {int(zone_1_by_hr[1])}',
