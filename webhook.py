@@ -1,4 +1,6 @@
 import os
+from time import time
+
 from telegram import get_training_data
 
 import uvicorn
@@ -26,7 +28,7 @@ async def get_data(request: Request):
     print(data)
 
     if data['aspect_type'] == 'create':
-        user_id = os.getenv('FIRST_USER_ID')
+        # user_id = os.getenv('FIRST_USER_ID')
         # athlete = data['owner_id']
         # if athlete == os.getenv('FIRST_ATHLETE_ID'):
         #     user_id = os.getenv('FIRST_USER_ID')
@@ -35,11 +37,10 @@ async def get_data(request: Request):
         #
         # print(type(user_id))
         # print(user_id)
-        get_training_data(user_id)
+        start = time()
+        await get_training_data(666785382)
+        print(time()-start)
         print('def is run')
         return status.HTTP_200_OK
 
     return status.HTTP_200_OK
-
-# if __name__ == '__main__':
-#     uvicorn.run(app, port=9000, host='localhost')
