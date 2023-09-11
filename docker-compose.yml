@@ -24,6 +24,7 @@ services:
       - mongo_db
     env_file:
       - .env
+    restart: always
 
 networks:
   custom:
