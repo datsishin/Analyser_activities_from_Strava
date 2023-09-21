@@ -8,6 +8,10 @@ services:
       - '27017:27017'
     networks:
       - custom
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
 
   #APP
   app:
@@ -24,7 +28,10 @@ services:
       - mongo_db
     env_file:
       - .env
-    restart: always
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
 
 networks:
   custom:
