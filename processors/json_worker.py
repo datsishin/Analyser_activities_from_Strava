@@ -5,9 +5,6 @@ from processors.gpx_maker import get_initial_data
 from processors.polyline_file import get_picture
 from users import users_data, nl
 
-# from processors.polyline_file import get_picture
-
-
 bikes = ['заезд', 'виртуальный заезд', 'ride', 'virtualride']
 run = ['забег', 'run']
 
@@ -35,8 +32,7 @@ def get_heartrate():
 
 
 def get_power(user_id: int):
-    has_powermeter = load_data['device_watts']
-    if has_powermeter:
+    if 'device_watts' in load_data.keys() and load_data['device_watts']:
         ftp = int(users_data[f'{user_id}']['ftp'])
         weighted_average_watts = int(load_data['weighted_average_watts'])
         average_power = int(load_data['average_watts'])
@@ -44,10 +40,11 @@ def get_power(user_id: int):
         user_weight = float(users_data[f'{user_id}']['weight'])
         relative_power = round(weighted_average_watts / user_weight, 2)
         tss = round((weighted_average_watts ** 2 * load_data['moving_time']) / (ftp ** 2 * 3600) * 100, 1)
-        return weighted_average_watts, relative_power, average_power, max_power, tss
+
     else:
-        weighted_average_watts = relative_power = average_power = max_power = 'Неизвестно'
-        return weighted_average_watts, relative_power, average_power, max_power
+        weighted_average_watts = relative_power = average_power = max_power = tss = 'Неизвестно'
+
+    return weighted_average_watts, relative_power, average_power, max_power, tss
 
 
 def get_cadence():
