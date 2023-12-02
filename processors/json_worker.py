@@ -2,6 +2,7 @@ from datetime import datetime
 from time import strftime, gmtime
 from db.training import get_last_training
 from processors.gpx_maker import get_initial_data
+from processors.polyline_file import get_picture
 from users import users_data, nl
 
 # from processors.polyline_file import get_picture
@@ -59,7 +60,7 @@ def get_cadence():
 
 
 def get_ratio(check_power, check_hr):
-    if check_power[0] and check_hr[0] != 'Неизвестно':
+    if check_power[0] != 'Неизвестно' and check_hr[0] != 'Неизвестно':
         ratio = round(check_power[0] / check_hr[0], 1)
         return ratio
     else:
@@ -97,7 +98,7 @@ def get_temperature():
 def generation_analyse(user_id: int):
     global load_data
     load_data = get_last_training(user_id)[0]
-    # get_picture(load_data)
+    get_picture(load_data)
 
     for i in range(0, len(load_data)):
         type_of_activity = get_type_of_activity()
@@ -147,7 +148,7 @@ def generation_analyse(user_id: int):
 
                 f'⚖️Удельная мощность – {check_power[1]}{nl}'
                 f'💪🏻Усредненная мощность – {check_power[0]}{nl}'
-                f'😰TSS – {check_power[4]}{nl}'
+                f'😰TSS – {check_power[4] if len(check_power) == 5 else check_power[3]}{nl}'
                 f'📉Изменение мощность/пульс – {check_index}{nl}'
                 f'📶Мощность/пульс – {check_ratio}{nl}'
             ]

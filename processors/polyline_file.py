@@ -8,36 +8,39 @@ import polyline
 def get_picture(load_data: dict):
     my_polyline = load_data['map']['summary_polyline']
 
-    export_polyline = polyline.decode(my_polyline, 5)
+    if 'map' in load_data.keys():
+        if 'summary_polyline' in load_data['map'].keys():
 
-    latitude = []
-    longitude = []
-    for _ in range(0, len(export_polyline)):
-        latitude.append(export_polyline[_][0])
-        longitude.append(export_polyline[_][1])
+            export_polyline = polyline.decode(my_polyline, 5)
 
-    avg_latitude = statistics.mean(latitude)
-    avg_longitude = statistics.mean(longitude)
+            latitude = []
+            longitude = []
+            for _ in range(0, len(export_polyline)):
+                latitude.append(export_polyline[_][0])
+                longitude.append(export_polyline[_][1])
 
-    min_latitude = min(latitude)
-    max_latitude = max(latitude)
+            avg_latitude = statistics.mean(latitude)
+            avg_longitude = statistics.mean(longitude)
 
-    min_longitude = min(longitude)
-    max_longitude = max(longitude)
+            min_latitude = min(latitude)
+            max_latitude = max(latitude)
 
-    center_point = [avg_latitude, avg_longitude]
+            min_longitude = min(longitude)
+            max_longitude = max(longitude)
 
-    m = folium.Map(location=center_point, width=1000, height=1000)
+            center_point = [avg_latitude, avg_longitude]
 
-    trail_coordinates = export_polyline
+            m = folium.Map(location=center_point, width=1000, height=1000)
 
-    folium.PolyLine(trail_coordinates).add_to(m)
+            trail_coordinates = export_polyline
 
-    delta = 0.00001
+            folium.PolyLine(trail_coordinates).add_to(m)
 
-    m.fit_bounds([(min_latitude + delta, min_longitude + delta),
-                  (max_latitude + delta, max_longitude + delta)])
+            delta = 0.00001
 
-    img_data = m._to_png(1)
-    img = Image.open(io.BytesIO(img_data))
-    img.save('media/map.png')
+            m.fit_bounds([(min_latitude + delta, min_longitude + delta),
+                          (max_latitude + delta, max_longitude + delta)])
+
+            img_data = m._to_png(1)
+            img = Image.open(io.BytesIO(img_data))
+            img.save('media/map.png')
