@@ -5,10 +5,12 @@ import polyline
 
 from PIL import Image
 from selenium import webdriver
-from selenium.webdriver.firefox.service import Service as FirefoxService
-from webdriver_manager.firefox import GeckoDriverManager
+from selenium.webdriver.firefox.options import Options
 
-driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()))
+options = Options()
+options.binary_location = r'/usr/local/bin/geckodriver'
+driver = webdriver.Firefox(executable_path=r'/usr/local/bin/geckodriver', options=options)
+
 
 def get_picture(load_data: dict):
     if 'map' in load_data.keys():
