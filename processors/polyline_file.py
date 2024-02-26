@@ -1,9 +1,14 @@
 import io
 import statistics
-from PIL import Image
 import folium
 import polyline
 
+from PIL import Image
+from selenium import webdriver
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from webdriver_manager.firefox import GeckoDriverManager
+
+driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()))
 
 def get_picture(load_data: dict):
     if 'map' in load_data.keys():
