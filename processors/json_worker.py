@@ -56,40 +56,36 @@ def get_cadence():
         return average_cadence
 
 
-def get_ratio(check_power, check_hr):
+def get_ratio(check_power, check_hr) -> float or None:
+    ratio = None
     if check_power[0] != 'Неизвестно' and check_hr[0] != 'Неизвестно':
-        ratio = round(check_power[0] / check_hr[0], 1)
-        return ratio
-    else:
-        return 'Неизвестно'
+        ratio = round(check_power[0] / check_hr[0], 2)
+    return ratio
 
 
-def get_energy_spent():
+def get_energy_spent() -> int or None:
+    spent_calories = None
     if 'kilojoules' in load_data:
-        check_calories = int(load_data['kilojoules'])
-        return check_calories
-    else:
-        check_calories = 'Неизвестно'
-        return check_calories
+        spent_calories = int(load_data['kilojoules'])
+
+    return spent_calories
 
 
-def get_index(user_id: int):
+def get_index(user_id: int) -> float or None:
+    ratio = None
     index = get_initial_data(load_data['id'], user_id)
     if index:
-        return f'{round(index, 2)}%'
-    else:
-        index = 'Неизвестно'
-        return index
+        ratio = round(index, 2)
+
+    return ratio
 
 
-def get_temperature():
+def get_temperature() -> int or None:
+    temperature = None
     if 'average_temp' in load_data:
         temperature = int(load_data['average_temp'])
 
-        return f'{temperature}°C'
-    else:
-        temperature = 'Неизвестно'
-        return temperature
+    return temperature
 
 
 def generation_analyse(user_id: int):
@@ -130,8 +126,8 @@ def generation_analyse(user_id: int):
                 f'⬇️Минимальная высота – {elev_low}м{nl}'
                 f'🎖️Количество наград – {achievement_count}{nl}'
                 f'👯Количество других атлетов – {athlete_count}{nl}'
-                f'🌡️Средняя температура – {check_temperature}{nl}'
-                f'🧁Потрачено калорий – {check_calories}{nl}'
+                f'🌡️Средняя температура  – {check_temperature if check_temperature else "Неизвестно"}{nl}'
+                f'🧁Потрачено калорий – {check_calories if check_calories else "Неизвестно"}{nl}'
                 f'{nl}'
 
                 f'🫀Средний пульс – {check_hr[0]}{nl}'
@@ -146,8 +142,8 @@ def generation_analyse(user_id: int):
                 f'⚖️Удельная мощность – {check_power[1]}{nl}'
                 f'💪🏻Усредненная мощность – {check_power[0]}{nl}'
                 f'😰TSS – {check_power[4] if len(check_power) == 5 else check_power[3]}{nl}'
-                f'📉Изменение мощность/пульс – {check_index}{nl}'
-                f'📶Мощность/пульс – {check_ratio}{nl}'
+                f'📉Изменение мощность/пульс – {check_index if check_index else "Неизвестно"}{nl}'
+                f'📶Мощность/пульс – {check_ratio if check_ratio else "Неизвестно"}{nl}'
             ]
 
             return item_of_bike

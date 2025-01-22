@@ -3,6 +3,7 @@ from datetime import timedelta
 from matplotlib import pyplot as plt
 import matplotlib
 from scipy.signal import savgol_filter
+from scipy.ndimage.filters import gaussian_filter1d
 
 from users import nl
 
@@ -84,6 +85,22 @@ def make_TSS_graph(list_of_date: list, list_of_TSS: list):
     plt.savefig('media/graph_by_TSS.png', dpi=100)
     return 'ok'
 
+def make_progress_graph(list_of_date: list, list_of_ratio: list):
+    fig, ax = plt.subplots()
+
+    x_values = list_of_date
+    y_values = gaussian_filter1d(list_of_ratio, sigma=3)
+
+    plt.plot(x_values, y_values, color='red', linewidth=2)
+    
+    ax.set_ylabel('Мощность/пульс', fontdict=font_axes)
+    ax.set_xlabel(f'{nl}Период всех тренировок', fontdict=font_axes)
+
+    plt.title(f'Отношение мощности к пульсу{nl}', fontdict=font_title)
+
+    fig.set_size_inches(12, 12)
+    plt.savefig('media/graph_power_by_hr.png', dpi=100)
+    return 'ok'
 
 def make_ATL_graph(list_of_date: list, list_of_TSS: list):
     list_ATL = []
