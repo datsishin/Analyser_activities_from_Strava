@@ -16,22 +16,40 @@ font_title = {'fontsize': 30,
 
 
 def make_chart(list_of_zone, dicts_of_zones, option):
-    type_of_measurement = {'hr': f'ЧСС, уд/мин',
-                           'power': f'Мощность, Вт'}
+    type_of_measurement = {
+        'hr': f'ЧСС, уд/мин',
+        'power': f'Мощность, Вт'
+    }
 
-    type_of_graph = {'power': 'мощности',
-                     'hr': 'пульса'}
+    type_of_graph = {
+        'power': 'мощности',
+        'hr': 'пульса'
+    }
 
     fig, ax = plt.subplots()
 
     zones = list(list_of_zone.values())
     percents = list(dicts_of_zones.values())
 
-    bar_labels = [f'{percents[0]}%', f'{percents[1]}%', f'{percents[2]}%',
-                  f'{percents[3]}%', f'{percents[4]}%', f'{percents[5]}%', f'{percents[6]}%']
+    bar_labels = [
+        f'{percents[0]}%',
+        f'{percents[1]}%',
+        f'{percents[2]}%',
+        f'{percents[3]}%',
+        f'{percents[4]}%',
+        # f'{percents[5]}%',
+        # f'{percents[6]}%'
+    ]
 
-    bar_colors = ['tab:gray', 'tab:cyan', 'tab:blue', 'tab:green', 'tab:olive', 'tab:orange',
-                  'tab:red']
+    bar_colors = [
+        'tab:gray',
+        # 'tab:cyan',
+        'tab:blue',
+        'tab:green',
+        # 'tab:olive',
+        'tab:orange',
+        'tab:red'
+    ]
 
     ax.bar(zones, percents, label=bar_labels, color=bar_colors, width=0.9, bottom=True)
 

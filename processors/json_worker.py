@@ -2,7 +2,7 @@ from datetime import datetime
 from time import strftime, gmtime
 from db.training import get_last_training
 from processors.gpx_maker import get_initial_data
-from processors.polyline_file import get_picture
+# from processors.polyline_file import get_picture
 from users import users_data, nl
 
 bikes = ['заезд', 'виртуальный заезд', 'ride', 'virtualride']
@@ -95,7 +95,7 @@ def get_temperature():
 def generation_analyse(user_id: int):
     global load_data
     load_data = get_last_training(user_id)[0]
-    get_picture(load_data)
+    # get_picture(load_data)
 
     for i in range(0, len(load_data)):
         type_of_activity = get_type_of_activity()
@@ -105,9 +105,9 @@ def generation_analyse(user_id: int):
         total_elevation_gain = int(load_data['total_elevation_gain'])
         achievement_count = load_data['achievement_count']
         athlete_count = load_data['athlete_count'] - 1
-        average_pace = strftime("%M:%S", gmtime((1 / load_data['average_speed'] * 1000)))
-        average_speed = round(load_data['average_speed'] * 3.6, 2)
-        max_speed = round(load_data['max_speed'] * 3.6, 2)
+        average_pace = strftime("%M:%S", gmtime((1 / load_data['average_speed'] * 1000))) if load_data['average_speed'] > 0 else 0
+        average_speed = round(load_data['average_speed'] * 3.6, 2) if load_data['average_speed'] > 0 else 0
+        max_speed = round(load_data['max_speed'] * 3.6, 2) if load_data['max_speed'] > 0 else 0
         elev_high = int(load_data['elev_high'])
         elev_low = int(load_data['elev_low'])
         check_hr = get_heartrate()
