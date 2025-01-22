@@ -9,7 +9,7 @@ import telebot
 from db.service_of_bike import cleaning
 from processors.json_worker import generation_analyse
 from main import get_mileage
-from processors.stats_graber import get_stats, get_full_stats, get_TSS_diagram, delete_all
+from processors.stats_graber import get_stats, get_full_stats, get_TSS_diagram, delete_all, get_progress_diagram
 from users import nl
 
 load_dotenv()
@@ -40,6 +40,17 @@ def get_training_data(message):
     for f in files:
         os.remove(f)
 
+
+def get_progress(message):
+    user_id = message.chat.id
+    data = get_progress_diagram(user_id)
+
+    if data == 'ok':
+        bot.send_photo(user_id, photo=open('media/graph_power_by_hr.png', 'rb'))
+
+        files = glob.glob('media/*')
+        for f in files:
+            os.remove(f)
 
 def get_statistics(message):
     user_id = message.chat.id
@@ -115,7 +126,8 @@ def main_keyboard():
     item1 = types.KeyboardButton('Последняя тренировка')
     item2 = types.KeyboardButton('Статистика')
     item3 = types.KeyboardButton('Загрузить тренировки')
-    item4 = types.KeyboardButton('Пробег')
+    item4 = types.KeyboardButton('Прогресс')
+    # item4 = types.KeyboardButton('Пробег')
     item5 = types.KeyboardButton('Обслуживание')
     item6 = types.KeyboardButton('Удалить данные')
 
@@ -150,6 +162,9 @@ def bot_message(message):
     if message.chat.type == 'private':
         if message.text == 'Последняя тренировка':
             get_training_data(message)
+
+        if message.text == 'Прогресс':
+            get_progress(message)
 
         if message.text == 'Статистика':
             get_statistics(message)

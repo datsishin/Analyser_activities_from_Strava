@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from db.training import post_many_training
 from db.mongo import db_connect
 from main import status_code_checker
-from processors.graph_creater import make_TSS_graph
+from processors.graph_creater import make_TSS_graph, make_progress_graph
 from users import users_data
 
 url = 'https://www.strava.com/api/v3/athlete/activities'
@@ -130,9 +130,9 @@ def type_of_activity_checker(data: dict):
     if 'weighted_average_watts' in data:
         return data['weighted_average_watts']
 
-    elif 'average_watts' in data:
-        return data['average_watts']
-
+def get_average_hr(data: dict):
+    if 'average_heartrate' in data:
+        return data['average_heartrate']
 
 def calc_TSS(power: int, moving_time: int, user_id: int):
     ftp = int(users_data[f'{user_id}']['ftp'])
@@ -160,3 +160,24 @@ def get_TSS_diagram(user_id: int):
 
     if list_of_TSS:
         return make_TSS_graph(list_of_date, list_of_TSS)
+    
+def get_progress_diagram(user_id: int):
+    list_of_date = []
+    list_of_ratio = []
+    list_of_all_training = get_list_of_training(user_id)
+    
+    for i in range(0, len(list_of_all_training)):
+        if list_of_all_training[i]['type'] in ['VirtualRide', 'Ride']:
+            power = type_of_activity_checker(list_of_all_training[i])
+            hr = get_average_hr(list_of_all_training[i])
+            if power and hr:
+                date_of_activity = datetime.strptime(list_of_all_training[i]['start_date_local'],
+                                                     '%Y-%m-%dT%H:%M:%SZ').date()
+                ratio = round(power / hr, 2)
+                list_of_date.append(date_of_activity)
+                list_of_ratio.append(ratio)
+            pass
+        pass
+
+    if list_of_ratio:
+        return make_progress_graph(list_of_date, list_of_ratio)
