@@ -2,7 +2,6 @@ from datetime import timedelta
 
 from matplotlib import pyplot as plt
 import matplotlib
-from scipy.signal import savgol_filter
 from scipy.ndimage.filters import gaussian_filter1d
 
 from users import nl
@@ -65,51 +64,18 @@ def make_chart(list_of_zone, dicts_of_zones, option):
     plt.savefig(f'media/graph_by_{option}.png', facecolor='white', edgecolor='black', dpi=100)
 
 
-def make_TSS_graph(list_of_date: list, list_of_TSS: list):
+def create_graph_by_data(dates: list, values: list, sigma: int, title: str, filename: str, metrics: str = 'Период всех тренировок'):
     fig, ax = plt.subplots()
 
-    ATL_values = make_ATL_graph(list_of_date, list_of_TSS)
-    x_values = list_of_date
-    y_values = list_of_TSS
-    ATL_values = savgol_filter(ATL_values, 51, 3)
-
-    plt.plot(x_values, y_values, 'ro', color='red', markersize=4)
-    plt.plot(x_values, ATL_values, color='magenta', markersize=5)
-
-    ax.set_ylabel('TSS', fontdict=font_axes)
-    ax.set_xlabel(f'{nl}Период всех тренировок', fontdict=font_axes)
-
-    plt.title(f'График TSS за все тренировки{nl}', fontdict=font_title)
-
-    fig.set_size_inches(12, 12)
-    plt.savefig('media/graph_by_TSS.png', dpi=100)
-    return 'ok'
-
-def make_progress_graph(list_of_date: list, list_of_ratio: list):
-    fig, ax = plt.subplots()
-
-    x_values = list_of_date
-    y_values = gaussian_filter1d(list_of_ratio, sigma=3)
+    x_values = dates
+    y_values = gaussian_filter1d(values, sigma=3)
 
     plt.plot(x_values, y_values, color='red', linewidth=2)
     
-    ax.set_ylabel('Мощность/пульс', fontdict=font_axes)
+    ax.set_ylabel(nl + metrics, fontdict=font_axes)
     ax.set_xlabel(f'{nl}Период всех тренировок', fontdict=font_axes)
 
-    plt.title(f'Отношение мощности к пульсу{nl}', fontdict=font_title)
+    plt.title(title + nl, fontdict=font_title)
 
     fig.set_size_inches(12, 12)
-    plt.savefig('media/graph_power_by_hr.png', dpi=100)
-    return 'ok'
-
-def make_ATL_graph(list_of_date: list, list_of_TSS: list):
-    list_ATL = []
-    for i in range(len(list_of_date) - 1, -2, -1):
-        if i == len(list_of_date) - 1:
-            list_ATL.append(0)
-        elif list_of_date[i] - list_of_date[i - 1] <= timedelta(days=7):
-            list_ATL.append(list_of_TSS[i - 1] + list_of_TSS[i])
-
-    list_ATL.reverse()
-
-    return list_ATL
+    plt.savefig(filename, dpi=100)
