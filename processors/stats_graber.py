@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from db.training import post_many_training
 from db.mongo import db_connect
 from main import status_code_checker
-from processors.graph_creater import make_TSS_graph, make_progress_graph
+from processors.graph_creater import create_graph_by_data
 from users import users_data
 
 url = 'https://www.strava.com/api/v3/athlete/activities'
@@ -130,15 +130,24 @@ def type_of_activity_checker(data: dict):
     if 'weighted_average_watts' in data:
         return data['weighted_average_watts']
 
+def get_pace(data: dict):
+    pace_seconds_per_kilometer = None
+    if 'moving_time' in data and 'distance' in data:
+        moving_time = data['moving_time']
+        distance = data['distance']
+        if moving_time > 0 and distance > 0:
+            pace_seconds_per_kilometer = moving_time / distance * 1000
+
+    return pace_seconds_per_kilometer
+
 def get_average_hr(data: dict):
     if 'average_heartrate' in data:
         return data['average_heartrate']
 
-def calc_TSS(power: int, moving_time: int, user_id: int):
+def calc_TSS(power: int, moving_time: int, user_id: int) -> int:
     ftp = int(users_data[f'{user_id}']['ftp'])
     tss = round((power ** 2 * moving_time) / (ftp ** 2 * 3600) * 100, 1)
     return tss
-
 
 def get_TSS_diagram(user_id: int):
     list_of_date = []
@@ -146,7 +155,7 @@ def get_TSS_diagram(user_id: int):
     list_of_all_training = get_list_of_training(user_id)
 
     for i in range(0, len(list_of_all_training)):
-        if list_of_all_training[i]['type'] in ['VirtualRide', 'Ride']:
+        if list_of_all_training[i]['sport_type'] in ['VirtualRide', 'Ride']:
             power = type_of_activity_checker(list_of_all_training[i])
             if power:
                 moving_time = list_of_all_training[i]['moving_time']
@@ -155,29 +164,41 @@ def get_TSS_diagram(user_id: int):
                 TSS = calc_TSS(power, moving_time, user_id)
                 list_of_date.append(date_of_activity)
                 list_of_TSS.append(TSS)
-            pass
-        pass
 
     if list_of_TSS:
-        return make_TSS_graph(list_of_date, list_of_TSS)
+        create_graph_by_data(list_of_date, list_of_TSS, 3, 'График TSS за все тренировки', 'media/graph_by_TSS.png')
     
-def get_progress_diagram(user_id: int):
-    list_of_date = []
-    list_of_ratio = []
+def get_progress_diagrams(user_id: int):
+    list_of_date_by_power = []
+    # list_of_date_by_pace = []
+    list_of_ratio_power_by_hr = []
+    # list_of_ratio_pace_by_hr = []
     list_of_all_training = get_list_of_training(user_id)
     
-    for i in range(0, len(list_of_all_training)):
-        if list_of_all_training[i]['type'] in ['VirtualRide', 'Ride']:
-            power = type_of_activity_checker(list_of_all_training[i])
-            hr = get_average_hr(list_of_all_training[i])
+    for training in list_of_all_training:
+        if training['sport_type'] in ['VirtualRide', 'Ride']:
+            power = type_of_activity_checker(training)
+            hr = get_average_hr(training)
             if power and hr:
-                date_of_activity = datetime.strptime(list_of_all_training[i]['start_date_local'],
+                date_of_activity = datetime.strptime(training['start_date_local'],
                                                      '%Y-%m-%dT%H:%M:%SZ').date()
                 ratio = round(power / hr, 2)
-                list_of_date.append(date_of_activity)
-                list_of_ratio.append(ratio)
-            pass
-        pass
+                list_of_date_by_power.append(date_of_activity)
+                list_of_ratio_power_by_hr.append(ratio)
+                continue
 
-    if list_of_ratio:
-        return make_progress_graph(list_of_date, list_of_ratio)
+        # if training['sport_type'] in ['Run', 'TrailRun']:
+        #     pace = get_pace(training)
+        #     hr = get_average_hr(training)
+        #     if pace and hr:
+        #         date_of_activity = datetime.strptime(training['start_date_local'],
+        #                                              '%Y-%m-%dT%H:%M:%SZ').date()
+        #         ratio = round(pace / hr, 2)
+        #         list_of_date_by_pace.append(date_of_activity)
+        #         list_of_ratio_pace_by_hr.append(ratio)
+
+    if list_of_ratio_power_by_hr:
+        create_graph_by_data(list_of_date_by_power, list_of_ratio_power_by_hr, 3, 'Отношение мощности к пульсу', 'media/graph_power_by_hr.png', 'Вт/удары в минуту')
+
+    # if list_of_ratio_pace_by_hr:
+    #     create_graph_by_data(list_of_date_by_pace, list_of_ratio_pace_by_hr, 2, 'Отношение темпа к пульсу','media/graph_pace_by_hr.png', 'Секунды на километр/удары в минуту')

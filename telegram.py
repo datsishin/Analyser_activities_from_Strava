@@ -9,7 +9,7 @@ import telebot
 from db.service_of_bike import cleaning
 from processors.json_worker import generation_analyse
 from main import get_mileage
-from processors.stats_graber import get_stats, get_full_stats, get_TSS_diagram, delete_all, get_progress_diagram
+from processors.stats_graber import get_stats, get_full_stats, get_TSS_diagram, delete_all, get_progress_diagrams
 from users import nl
 
 load_dotenv()
@@ -43,10 +43,18 @@ def get_training_data(message):
 
 def get_progress(message):
     user_id = message.chat.id
-    data = get_progress_diagram(user_id)
+    get_progress_diagrams(user_id)
+    power_by_hr_ratio_path = 'media/graph_power_by_hr.png'
+    pace_by_hr_ratio_path = 'media/graph_pace_by_hr.png'
 
-    if data == 'ok':
-        bot.send_photo(user_id, photo=open('media/graph_power_by_hr.png', 'rb'))
+    list_of_pic = []
+    if os.path.exists(power_by_hr_ratio_path):
+        list_of_pic.append(InputMediaPhoto(open(power_by_hr_ratio_path, 'rb')))
+    if os.path.exists(pace_by_hr_ratio_path):
+        list_of_pic.append(InputMediaPhoto(open(pace_by_hr_ratio_path, 'rb')))
+
+    if list_of_pic:
+        bot.send_media_group(user_id, list_of_pic, disable_notification=True)
 
         files = glob.glob('media/*')
         for f in files:
@@ -55,7 +63,7 @@ def get_progress(message):
 def get_statistics(message):
     user_id = message.chat.id
     data = get_stats(user_id)
-    graph = get_TSS_diagram(user_id)
+    get_TSS_diagram(user_id)
 
     if type(data) == list:
         bot.send_message(user_id, text=f'Время тренировок за последние 7 дней:{nl}{data[0]}'
@@ -81,12 +89,11 @@ def get_statistics(message):
     if type(data) == str:
         bot.send_message(user_id, text=data)
 
-    if graph == 'ok':
-        bot.send_photo(user_id, photo=open('media/graph_by_TSS.png', 'rb'))
+    bot.send_photo(user_id, photo=open('media/graph_by_TSS.png', 'rb'))
 
-        files = glob.glob('media/*')
-        for f in files:
-            os.remove(f)
+    files = glob.glob('media/*')
+    for f in files:
+        os.remove(f)
 
 
 def get_service_info(message):

@@ -10,7 +10,7 @@ run = ['забег', 'run']
 
 
 def get_type_of_activity():
-    type_of_activity = str.lower(load_data['type'])
+    type_of_activity = str.lower(load_data['sport_type'])
     if type_of_activity in bikes:
         return 'Велосипед'
     if type_of_activity in run:
